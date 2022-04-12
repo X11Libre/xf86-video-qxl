@@ -807,8 +807,8 @@ qxl_screen_init (SCREEN_INIT_ARGS_DECL)
     
     CHECK_POINT ();
     
-    pScreen->width = pScrn->currentMode->HDisplay;
-    pScreen->height = pScrn->currentMode->VDisplay;
+    pScreen->width = qxl->primary_mode.x_res;
+    pScreen->height = qxl->primary_mode.y_res;
     
     if (!xf86CrtcScreenInit (pScreen))
 	return FALSE;
