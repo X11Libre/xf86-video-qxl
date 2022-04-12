@@ -1005,6 +1005,10 @@ qxl_pre_init_common(ScrnInfoPtr pScrn)
         get_bool_option (qxl->options, OPTION_DEBUG_RENDER_FALLBACKS, "QXL_DEBUG_RENDER_FALLBACKS");
     qxl->num_heads =
         get_int_option (qxl->options, OPTION_NUM_HEADS, "QXL_NUM_HEADS");
+    if (qxl->num_heads == 0) {
+        xf86DrvMsg (scrnIndex, X_INFO, "QXL_NUM_HEADS not configured, defaulting to 1\n");
+        qxl->num_heads = 1;
+    }
 
     qxl->deferred_fps = get_int_option(qxl->options, OPTION_SPICE_DEFERRED_FPS, "XSPICE_DEFERRED_FPS");
     if (qxl->deferred_fps > 0)
