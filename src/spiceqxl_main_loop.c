@@ -209,7 +209,7 @@ int watch_count = 0;
 
 static SpiceWatch *watch_add(int fd, int event_mask, SpiceWatchFunc func, void *opaque)
 {
-    SpiceWatch *watch = xnfalloc(sizeof(SpiceWatch));
+    SpiceWatch *watch = XNFalloc(sizeof(SpiceWatch));
 
     DPRINTF(0, "adding %p, fd=%d at %d", watch,
         fd, watch_count);
@@ -381,7 +381,7 @@ static int watch_update_mask_internal(SpiceWatch *watch, int event_mask)
 
 static SpiceWatch *watch_add(int fd, int event_mask, SpiceWatchFunc func, void *opaque)
 {
-    SpiceWatch *watch = xnfalloc(sizeof(SpiceWatch));
+    SpiceWatch *watch = XNFalloc(sizeof(SpiceWatch));
 
     DPRINTF(0, "adding %p, fd=%d", watch, fd);
 
