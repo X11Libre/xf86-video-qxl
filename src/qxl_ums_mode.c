@@ -38,7 +38,7 @@ screen_create_mode (ScrnInfoPtr pScrn, int width, int height, int type)
 {
     DisplayModePtr mode;
 
-    mode = xnfcalloc (1, sizeof (DisplayModeRec));
+    mode = XNFcallocarray(1, sizeof (DisplayModeRec));
 
     mode->status = MODE_OK;
     mode->type = type;
@@ -469,8 +469,8 @@ qxl_init_randr (ScrnInfoPtr pScrn, qxl_screen_t *qxl)
      * xf86InitialConfiguration */
     xf86CrtcSetSizeRange (pScrn, 320, 200, 8192, 8192);
 
-    qxl->crtcs = xnfcalloc (sizeof (xf86CrtcPtr), qxl->num_heads);
-    qxl->outputs = xnfcalloc (sizeof (xf86OutputPtr), qxl->num_heads);
+    qxl->crtcs = XNFcallocarray(sizeof (xf86CrtcPtr), qxl->num_heads);
+    qxl->outputs = XNFcallocarray(sizeof (xf86OutputPtr), qxl->num_heads);
 
     for (i = 0 ; i < qxl->num_heads; ++i)
     {
@@ -478,7 +478,7 @@ qxl_init_randr (ScrnInfoPtr pScrn, qxl_screen_t *qxl)
 	if (!qxl->crtcs[i])
 	    xf86DrvMsg (pScrn->scrnIndex, X_ERROR, "failed to create Crtc %d", i);
 
-	qxl_crtc = xnfcalloc (sizeof (qxl_crtc_private), 1);
+	qxl_crtc = XNFcallocarray(sizeof (qxl_crtc_private), 1);
 	qxl->crtcs[i]->driver_private = qxl_crtc;
 	qxl_crtc->head = i;
 	qxl_crtc->qxl = qxl;
@@ -489,7 +489,7 @@ qxl_init_randr (ScrnInfoPtr pScrn, qxl_screen_t *qxl)
 
 	output->possible_crtcs = (1 << i); /* bitrange of allowed outputs - do a 1:1 */
 	output->possible_clones = 0; /* TODO: not? */
-	qxl_output = xnfcalloc (sizeof (qxl_output_private), 1);
+	qxl_output = XNFcallocarray(sizeof (qxl_output_private), 1);
 	output->driver_private = qxl_output;
 	qxl_output->head = i;
 	qxl_output->qxl = qxl;

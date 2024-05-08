@@ -154,7 +154,7 @@ Bool qxl_pre_init_kms(ScrnInfoPtr pScrn, int flags)
     }
     
     if (!pScrn->driverPrivate)
-	pScrn->driverPrivate = xnfcalloc (sizeof (qxl_screen_t), 1);
+	pScrn->driverPrivate = XNFcallocarray(sizeof (qxl_screen_t), 1);
 
     qxl = pScrn->driverPrivate;
     qxl->device_primary = QXL_DEVICE_PRIMARY_UNDEFINED;
