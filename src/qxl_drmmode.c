@@ -348,7 +348,7 @@ drmmode_crtc_init(ScrnInfoPtr pScrn, drmmode_ptr drmmode, int num)
 		return;
 	crtc->driverIsPerformingTransform = FALSE;
 
-	drmmode_crtc = xnfcalloc(sizeof(drmmode_crtc_private_rec), 1);
+	drmmode_crtc = XNFcallocarray(sizeof(drmmode_crtc_private_rec), 1);
 	drmmode_crtc->mode_crtc = drmModeGetCrtc(drmmode->fd, drmmode->mode_res->crtcs[num]);
 	drmmode_crtc->drmmode = drmmode;
 	crtc->driver_private = drmmode_crtc;

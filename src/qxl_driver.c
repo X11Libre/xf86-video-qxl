@@ -1060,7 +1060,7 @@ qxl_pre_init (ScrnInfoPtr pScrn, int flags)
     }
     
     if (!pScrn->driverPrivate)
-	pScrn->driverPrivate = xnfcalloc (sizeof (qxl_screen_t), 1);
+	pScrn->driverPrivate = XNFcallocarray(sizeof (qxl_screen_t), 1);
     
     qxl = pScrn->driverPrivate;
     qxl->device_primary = QXL_DEVICE_PRIMARY_UNDEFINED;
@@ -1131,7 +1131,7 @@ qxl_pre_init (ScrnInfoPtr pScrn, int flags)
     
     /* ddc stuff here */
     
-    clockRanges = xnfcalloc (sizeof (ClockRange), 1);
+    clockRanges = XNFcallocarray(sizeof (ClockRange), 1);
     clockRanges->next = NULL;
     clockRanges->minClock = 10000;
     clockRanges->maxClock = 400000;
@@ -1396,7 +1396,7 @@ qxl_pci_probe (DriverPtr drv, int entity, struct pci_device *dev, intptr_t match
     }
 
     if (!pScrn->driverPrivate)
-	pScrn->driverPrivate = xnfcalloc (sizeof (qxl_screen_t), 1);
+	pScrn->driverPrivate = XNFcallocarray(sizeof (qxl_screen_t), 1);
     qxl = pScrn->driverPrivate;
     qxl->pci = dev;
     
@@ -1433,7 +1433,7 @@ qxl_platform_probe(DriverPtr driver, int entity, int flags,
 
     xf86AddEntityToScreen(pScrn, entity);
 
-    qxl = pScrn->driverPrivate = xnfcalloc (sizeof (qxl_screen_t), 1);
+    qxl = pScrn->driverPrivate = XNFcallocarray(sizeof (qxl_screen_t), 1);
     qxl->pci = dev->pdev;
     qxl->platform_dev = dev;
 
