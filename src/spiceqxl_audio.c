@@ -405,7 +405,7 @@ static void handle_one_change(qxl_screen_t *qxl, struct inotify_event *e)
             return;
         }
 
-        fname = xnfalloc(strlen(e->name) + strlen(qxl->playback_fifo_dir) + 1 + 1);
+        fname = XNFalloc(strlen(e->name) + strlen(qxl->playback_fifo_dir) + 1 + 1);
         strcpy(fname, qxl->playback_fifo_dir);
         strcat(fname, "/");
         strcat(fname, e->name);

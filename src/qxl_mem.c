@@ -233,7 +233,7 @@ qxl_reset_and_create_mem_slots (qxl_screen_t *qxl)
     qxl->slot_id_bits = qxl->rom->slot_id_bits;
     qxl->va_slot_mask = (~(uint64_t)0) >> (qxl->slot_id_bits + qxl->slot_gen_bits);
 
-    qxl->mem_slots = xnfalloc (qxl->n_mem_slots * sizeof (qxl_memslot_t));
+    qxl->mem_slots = XNFalloc(qxl->n_mem_slots * sizeof (qxl_memslot_t));
 
 #ifdef XSPICE
     qxl->main_mem_slot = qxl->vram_mem_slot = setup_slot (qxl, 0, 0, ~0, 0, ~0);
