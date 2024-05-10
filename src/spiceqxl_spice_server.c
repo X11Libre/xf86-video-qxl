@@ -200,21 +200,21 @@ void xspice_set_spice_server_options(OptionInfoPtr options)
         len = strlen(x509_dir) + 32;
 
         if (x509_key_file_base) {
-            x509_key_file = xnfstrdup(x509_key_file_base);
+            x509_key_file = XNFstrdup(x509_key_file_base);
         } else {
             x509_key_file = XNFalloc(len);
             snprintf(x509_key_file, len, "%s/%s", x509_dir, X509_SERVER_KEY_FILE);
         }
 
         if (x509_cert_file_base) {
-            x509_cert_file = xnfstrdup(x509_cert_file_base);
+            x509_cert_file = XNFstrdup(x509_cert_file_base);
         } else {
             x509_cert_file = XNFalloc(len);
             snprintf(x509_cert_file, len, "%s/%s", x509_dir, X509_SERVER_CERT_FILE);
         }
 
         if (x509_cacert_file_base) {
-            x509_cacert_file = xnfstrdup(x509_cert_file_base);
+            x509_cacert_file = XNFstrdup(x509_cert_file_base);
         } else {
             x509_cacert_file = XNFalloc(len);
             snprintf(x509_cacert_file, len, "%s/%s", x509_dir, X509_CA_CERT_FILE);
