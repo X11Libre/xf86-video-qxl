@@ -57,11 +57,7 @@ static void dfps_ticker(void *opaque);
 
 static inline dfps_info_t *dfps_get_info (PixmapPtr pixmap)
 {
-#if HAS_DEVPRIVATEKEYREC
     return dixGetPrivate(&pixmap->devPrivates, &uxa_pixmap_index);
-#else
-    return dixLookupPrivate(&pixmap->devPrivates, &uxa_pixmap_index);
-#endif
 }
 
 static inline void dfps_set_info (PixmapPtr pixmap, dfps_info_t *info)

@@ -168,9 +168,7 @@ drmmode_set_mode_major(xf86CrtcPtr crtc, DisplayModePtr mode,
 		crtc->x = x;
 		crtc->y = y;
 		crtc->rotation = rotation;
-#if XORG_VERSION_CURRENT >= XORG_VERSION_NUMERIC(1,5,99,0,0)
 		crtc->transformPresent = FALSE;
-#endif
 	}
 
 	output_ids = calloc(sizeof(uint32_t), xf86_config->num_output);
@@ -192,11 +190,9 @@ drmmode_set_mode_major(xf86CrtcPtr crtc, DisplayModePtr mode,
 			output_count++;
 		}
 
-#if XORG_VERSION_CURRENT >= XORG_VERSION_NUMERIC(1,7,0,0,0)
 		crtc->funcs->gamma_set(crtc, crtc->gamma_red, crtc->gamma_green,
 				       crtc->gamma_blue, crtc->gamma_size);
-#endif
-		
+
 		drmmode_ConvertToKMode(crtc->scrn, &kmode, mode);
 
 		fb_id = drmmode->fb_id;

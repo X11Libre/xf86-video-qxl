@@ -32,9 +32,6 @@
 
 #include "compiler.h"
 #include "xf86.h"
-#if GET_ABI_MAJOR(ABI_VIDEODRV_VERSION) < 6
-#include "xf86Resources.h"
-#endif
 #include "xf86Cursor.h"
 #include "xf86_OSproc.h"
 #ifdef XV
@@ -59,15 +56,7 @@
 
 #include "qxl_drmmode.h"
 
-#if (XORG_VERSION_CURRENT < XORG_VERSION_NUMERIC(1, 11, 99, 903, 0))
-typedef struct list xorg_list_t;
-#define xorg_list_init              list_init
-#define xorg_list_add               list_add
-#define xorg_list_del               list_del
-#define xorg_list_for_each_entry    list_for_each_entry
-#else
 typedef struct xorg_list xorg_list_t;
-#endif
 
 struct xf86_platform_device;
 
@@ -516,21 +505,14 @@ void		   qxl_surface_composite (qxl_surface_t *dest,
 					  int width, int height);
 
 /* UXA */
-#if HAS_DEVPRIVATEKEYREC
 extern DevPrivateKeyRec uxa_pixmap_index;
-#else
-extern int uxa_pixmap_index;
-#endif
+
 Bool
 qxl_uxa_init (qxl_screen_t *qxl, ScreenPtr screen);
 
 static inline qxl_surface_t *get_surface (PixmapPtr pixmap)
 {
-#if HAS_DEVPRIVATEKEYREC
     return dixGetPrivate(&pixmap->devPrivates, &uxa_pixmap_index);
-#else
-    return dixLookupPrivate(&pixmap->devPrivates, &uxa_pixmap_index);
-#endif
 }
 
 static inline void set_surface (PixmapPtr pixmap, qxl_surface_t *surface)

@@ -37,11 +37,7 @@
 #include "uxa-priv.h"
 #include "uxa.h"
 
-#if HAS_DEVPRIVATEKEYREC
 DevPrivateKeyRec uxa_screen_index;
-#else
-int uxa_screen_index;
-#endif
 
 /**
  * uxa_get_drawable_pixmap() returns a backing pixmap for a given drawable.
@@ -504,10 +500,9 @@ Bool uxa_driver_init(ScreenPtr screen, uxa_driver_t * uxa_driver)
 			   "non-NULL\n", screen->myNum);
 		return FALSE;
 	}
-#if HAS_DIXREGISTERPRIVATEKEY
-        if (!dixRegisterPrivateKey(&uxa_screen_index, PRIVATE_SCREEN, 0))
-            return FALSE;
-#endif
+
+	if (!dixRegisterPrivateKey(&uxa_screen_index, PRIVATE_SCREEN, 0))
+		return FALSE;
 	uxa_screen = calloc(sizeof(uxa_screen_t), 1);
 
 	if (!uxa_screen) {
@@ -527,8 +522,6 @@ Bool uxa_driver_init(ScreenPtr screen, uxa_driver_t * uxa_driver)
 	uxa_screen->solid_clear = 0;
 	uxa_screen->solid_black = 0;
 	uxa_screen->solid_white = 0;
-
-//    exaDDXDriverInit(screen);
 
 	/*
 	 * Replace various fb screen functions
