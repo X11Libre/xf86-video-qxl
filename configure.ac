@@ -68,7 +68,7 @@ PKG_CHECK_EXISTS(xfont2,
                  [xfont_pc=xfont])
 
 # Obtain compiler/linker options for the driver dependencies
-PKG_CHECK_MODULES(XORG, [xorg-server >= 1.0.99.901] xproto fontsproto $xfont_pc $REQUIRED_MODULES)
+PKG_CHECK_MODULES(XORG, [xorg-server >= 1.18] xproto fontsproto $xfont_pc $REQUIRED_MODULES)
 
 save_CFLAGS="$CFLAGS"
 CFLAGS="$XORG_CFLAGS"
