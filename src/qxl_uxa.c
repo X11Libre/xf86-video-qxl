@@ -37,11 +37,7 @@
 #include "dfps.h"
 #include <spice/protocol.h>
 
-#if HAS_DEVPRIVATEKEYREC
 DevPrivateKeyRec uxa_pixmap_index;
-#else
-int uxa_pixmap_index;
-#endif
 
 static Bool
 qxl_prepare_access (PixmapPtr pixmap, RegionPtr region, uxa_access_t access)
@@ -548,13 +544,8 @@ qxl_uxa_init (qxl_screen_t *qxl, ScreenPtr screen)
 {
     ScrnInfoPtr scrn = xf86ScreenToScrn (screen);
 
-#if HAS_DIXREGISTERPRIVATEKEY
     if (!dixRegisterPrivateKey (&uxa_pixmap_index, PRIVATE_PIXMAP, 0))
 	return FALSE;
-#else
-    if (!dixRequestPrivate (&uxa_pixmap_index, 0))
-	return FALSE;
-#endif
 
     qxl->uxa = uxa_driver_alloc ();
     if (qxl->uxa == NULL)

@@ -461,12 +461,8 @@ qxl_close_screen (CLOSE_SCREEN_ARGS_DECL)
     Bool result;
     
     ErrorF ("Disabling FB access for %d\n", pScrn->scrnIndex);
-#ifndef XF86_SCRN_INTERFACE
-    pScrn->EnableDisableFBAccess (scrnIndex, FALSE);
-#else
     pScrn->EnableDisableFBAccess (pScrn, FALSE);
-#endif
-    
+
     pScreen->CreateScreenResources = qxl->create_screen_resources;
     pScreen->CloseScreen = qxl->close_screen;
     
@@ -786,12 +782,8 @@ qxl_screen_init (SCREEN_INIT_ARGS_DECL)
     /* We need to set totalPixmapSize after setup_uxa and Damage,
        as the privates size is not computed correctly until then
      */
-#if (XORG_VERSION_CURRENT < XORG_VERSION_NUMERIC(1, 12, 99, 901, 0))
-    pScreen->totalPixmapSize = BitmapBytePad ((sizeof (PixmapRec) + dixPrivatesSize (PRIVATE_PIXMAP) ) * 8);
-#else
     pScreen->totalPixmapSize = BitmapBytePad((sizeof(PixmapRec) +
 			    dixScreenSpecificPrivatesSize(pScreen, PRIVATE_PIXMAP) ) * 8);
-#endif
 
     miDCInitialize (pScreen, xf86GetPointerScreenFuncs());
     if (!miCreateDefColormap (pScreen))
@@ -1459,10 +1451,8 @@ qxl_driver_func(ScrnInfoPtr pScrn, xorgDriverFuncOp op, void *data)
         *hw_flags = HW_IO | HW_MMIO;
 #endif
         return TRUE;
-#if XORG_VERSION_CURRENT >= XORG_VERSION_NUMERIC(1,15,99,902,0)
     case SUPPORTS_SERVER_FDS:
         return TRUE;
-#endif
     default:
         return FALSE;
     }

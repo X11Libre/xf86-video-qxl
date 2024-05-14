@@ -81,13 +81,8 @@ static Bool qxl_open_drm_master(ScrnInfoPtr pScrn)
     }
 #endif
 
-#if XORG_VERSION_CURRENT >= XORG_VERSION_NUMERIC(1,9,99,901,0)
     XNFasprintf(&busid, "pci:%04x:%02x:%02x.%d",
                 dev->domain, dev->bus, dev->dev, dev->func);
-#else
-    busid = XNFprintf("pci:%04x:%02x:%02x.%d",
-		      dev->domain, dev->bus, dev->dev, dev->func);
-#endif
 
     qxl->drm_fd = drmOpen("qxl", busid);
     if (qxl->drm_fd == -1) {
