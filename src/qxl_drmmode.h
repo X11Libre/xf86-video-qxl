@@ -29,9 +29,12 @@
 
 #ifdef XF86DRM_MODE
 
+// need to include that first, before stdbool.h might come in, because some
+// (older) Xserver versions use "bool" as a parameter name
+#include "xf86str.h"
+
 #include "xf86drm.h"
 #include "xf86drmMode.h"
-#include "xf86str.h"
 #include "randrstr.h"
 #include "xf86Crtc.h"
 #ifdef HAVE_LIBUDEV
