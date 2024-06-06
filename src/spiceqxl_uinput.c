@@ -12,10 +12,13 @@
 #include <linux/input.h>
 #include <linux/uinput.h>
 
+/* special quirk against name clash between linux/input.h and xf86str.h */
+#undef BUS_PCI
+#undef BUS_USB
+
 #include "qxl_option_helpers.h"
 #include "spiceqxl_util.h"
 #include "spiceqxl_inputs.h"
-
 #include "spiceqxl_uinput.h"
 
 static const char *uinput_filename;
