@@ -118,7 +118,6 @@ typedef struct {
 	GetImageProcPtr SavedGetImage;
 	GetSpansProcPtr SavedGetSpans;
 	CreatePixmapProcPtr SavedCreatePixmap;
-	DestroyPixmapProcPtr SavedDestroyPixmap;
 	CopyWindowProcPtr SavedCopyWindow;
 	ChangeWindowAttributesProcPtr SavedChangeWindowAttributes;
 	BitmapToRegionProcPtr SavedBitmapToRegion;

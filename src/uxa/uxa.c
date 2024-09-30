@@ -425,7 +425,6 @@ static Bool uxa_close_screen(CLOSE_SCREEN_ARGS_DECL)
 	pScreen->GetImage = uxa_screen->SavedGetImage;
 	pScreen->GetSpans = uxa_screen->SavedGetSpans;
 	pScreen->CreatePixmap = uxa_screen->SavedCreatePixmap;
-	pScreen->DestroyPixmap = uxa_screen->SavedDestroyPixmap;
 	pScreen->CopyWindow = uxa_screen->SavedCopyWindow;
 	pScreen->ChangeWindowAttributes =
 	    uxa_screen->SavedChangeWindowAttributes;
