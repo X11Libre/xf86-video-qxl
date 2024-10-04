@@ -68,11 +68,9 @@ TEST=/store/test ( or TEST=$(pwd)/testxspice )
 mkdir -p $TEST/src
 cd $TEST/src
 
-# grab xserver, xspice, xextproto, xkbcomp and more
+# grab xserver, xspice, xorgproto, xkbcomp and more
 for src in \
-    https://gitlab.freedesktop.org/xorg/proto/xextproto.git \
-    https://gitlab.freedesktop.org/xorg/proto/x11proto.git \
-    https://gitlab.freedesktop.org/xorg/proto/fontsproto.git \
+    https://gitlab.freedesktop.org/xorg/proto/xorgproto.git \
     https://gitlab.freedesktop.org/xorg/app/xkbcomp.git \
     https://gitlab.freedesktop.org/xorg/xserver.git \
     https://gitlab.freedesktop.org/xorg/lib/libxtrans.git \
@@ -103,9 +101,7 @@ sudo yum-builddep spice (or spice-server)
 
 # now build xserver
 sudo yum install xorg-x11-server-devel libxcb-util-devel xcb-util-keysyms-devel libXfont-devel
-(cd xextproto; ./autogen.sh --prefix=$TEST --without-xmlto && make install)
-(cd x11proto; ./autogen.sh --prefix=$TEST && make install)
-(cd fontsproto; ./autogen.sh --prefix=$TEST && make install)
+(cd xorgproto; ./autogen.sh --prefix=$TEST --without-xmlto && make install)
 (cd libxtrans; ./autogen.sh --prefix=$TEST && make install)
 (cd libxkbfile; ./autogen.sh --prefix=$TEST && make install)
 (cd xkbcomp; ./autogen.sh --prefix=$TEST && make install)
