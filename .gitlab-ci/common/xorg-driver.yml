@@ -1,17 +1,17 @@
-# version 0.1.19
+# version 0.1.22
 variables:
-    DEBIAN_VERSION:   'bullseye-slim'
-    DEBIAN_TAG:       "2024-06-06.09"
+    DEBIAN_VERSION:   'bookworm-slim'
+    DEBIAN_TAG:       "2025-03-07"
     DEBIAN_EXEC:      'bash .gitlab-ci/common/debian/image-install.sh'
     DEBIAN_SKIP:      "false" # to enable, it has to be litterally "true"
 
-    FREEBSD_TAG:      '2024-06-06.06'
-    FREEBSD_VERSION:  '14.0'
+    FREEBSD_TAG:      '2025-03-07'
+    FREEBSD_VERSION:  '14.2'
 # image is yet too small for that - need a more complicated way :(
 #    FREEBSD_EXEC:     "bash .gitlab-ci/common/freebsd/image-install.sh"
     FREEBSD_SKIP:     "false" # to enable, it has to be litterally "true"
 
-.templates_sha: &template_sha bc70242ffb8402243e934659ecc1a2d1c89eca2b # see https://docs.gitlab.com/ee/ci/yaml/#includefile
+.templates_sha: &template_sha ef5e4669b7500834a17ffe9277e15fbb6d977fff # see https://docs.gitlab.com/ee/ci/yaml/#includefile
 
 include:
     - project:  'freedesktop/ci-templates'
@@ -92,6 +92,7 @@ image@debian@i386:
         FDO_DISTRIBUTION_VERSION:   "$DEBIAN_VERSION"
         FDO_DISTRIBUTION_EXEC:      "$DEBIAN_EXEC"
         FDO_DISTRIBUTION_TAG:       "amd64-$DEBIAN_TAG"
+        FDO_DISTRIBUTION_PLATFORM:  "amd64"
         FDO_BASE_IMAGE:             "amd64/debian:$DEBIAN_VERSION"
 
 .xorg.distro@debian@i386:
@@ -99,6 +100,7 @@ image@debian@i386:
         FDO_DISTRIBUTION_VERSION:   "$DEBIAN_VERSION"
         FDO_DISTRIBUTION_EXEC:      "$DEBIAN_EXEC"
         FDO_DISTRIBUTION_TAG:       "i386-$DEBIAN_TAG"
+        FDO_DISTRIBUTION_PLATFORM:  "i386"
         FDO_BASE_IMAGE:             "i386/debian:$DEBIAN_VERSION"
 
 # overwrite this one if another matrix is needed
@@ -110,8 +112,9 @@ image@debian@i386:
 # these break on Debian
 #                "xorg-server-1.18.4",
 #                "xorg-server-1.19.7",
-                "xorg-server-1.20.14",
-                "xorg-server-21.1.13",
+#                "xorg-server-1.20.14",
+#                "xorg-server-21.0.99.1",
+                "xorg-server-21.1.16",
                 "master"
               ]
 
@@ -173,7 +176,7 @@ image@freebsd:
 #                "xorg-server-1.19.7",
 #                "xorg-server-1.20.14", # breaks meson ... see: 331850ce6f0c48a1cfc489da2a27ca0220997a2f -- server-1.20-branch
                 "xorg-server-21.0.99.1",
-                "xorg-server-21.1.13",
+                "xorg-server-21.1.16",
                 "master"
               ]
 
