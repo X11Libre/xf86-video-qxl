@@ -24,6 +24,12 @@
 #include <config.h>
 #endif
 
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
+
+#include <stdio.h>
+
 #ifdef XF86DRM_MODE
 #include <fcntl.h>
 #include <sys/mman.h>
