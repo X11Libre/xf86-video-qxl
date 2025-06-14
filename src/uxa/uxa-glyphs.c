@@ -172,7 +172,7 @@ static Bool uxa_realize_glyph_caches(ScreenPtr pScreen)
 					CPComponentAlpha, &component_alpha,
 					serverClient, &error);
 
-		dixDestroyPixmap(pixmap, 0);
+		pScreen->DestroyPixmap(pixmap);
 
 		if (!picture)
 			goto bail;
@@ -281,7 +281,7 @@ uxa_glyph_cache_upload_glyph(ScreenPtr screen,
 		      x, y);
 
 	if (scratch != pGlyphPixmap)
-		dixDestroyPixmap(scratch, 0);
+		screen->DestroyPixmap(scratch);
 
 	FreeScratchGC(gc);
 }
@@ -933,7 +933,7 @@ uxa_glyphs_via_mask(CARD8 op,
 	uxa_clear_pixmap(screen, uxa_screen, pixmap);
 
 	if (!uxa_pixmap_is_offscreen(pixmap)) {
-		dixDestroyPixmap(pixmap, 0);
+		screen->DestroyPixmap(pixmap);
 		return 1;
 	}
 	
@@ -941,7 +941,7 @@ uxa_glyphs_via_mask(CARD8 op,
 	mask = CreatePicture(0, &pixmap->drawable,
 			      maskFormat, CPComponentAlpha,
 			      &component_alpha, serverClient, &error);
-	dixDestroyPixmap(pixmap, 0);
+	screen->DestroyPixmap(pixmap);
 
 	if (!mask)
 		return 1;
@@ -1132,7 +1132,7 @@ fallback:
 
 		gc = GetScratchGC(depth, screen);
 		if (!gc) {
-			dixDestroyPixmap(pixmap, 0);
+			screen->DestroyPixmap(pixmap);
 			return;
 		}
 
@@ -1146,7 +1146,7 @@ fallback:
 		localDst = CreatePicture(0, &pixmap->drawable,
 					 PictureMatchFormat(screen, depth, pDst->format),
 					 0, 0, serverClient, &error);
-		dixDestroyPixmap(pixmap, 0);
+		screen->DestroyPixmap(pixmap);
 
 		if (!localDst)
 			return;
