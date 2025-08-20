@@ -936,7 +936,7 @@ uxa_glyphs_via_mask(CARD8 op,
 		screen->DestroyPixmap(pixmap);
 		return 1;
 	}
-	
+
 	component_alpha = NeedsComponent(maskFormat->format);
 	mask = CreatePicture(0, &pixmap->drawable,
 			      maskFormat, CPComponentAlpha,

@@ -162,7 +162,7 @@ uxa_check_copy_area(DrawablePtr pSrc, DrawablePtr pDst, GCPtr pGC,
 
 	REGION_UNINIT (screen, &src_region);
 	REGION_UNINIT (screen, &dst_region);
-	
+
 	return ret;
 }
 
@@ -258,7 +258,7 @@ uxa_check_poly_segment(DrawablePtr pDrawable, GCPtr pGC,
 		}
 	    goto out;
 	}
-	
+
 	/* fb calls mi functions in the lineWidth != 0 case. */
 	fbPolySegment(pDrawable, pGC, nsegInit, pSegInit);
 
@@ -302,7 +302,7 @@ uxa_check_poly_fill_rect(DrawablePtr pDrawable, GCPtr pGC,
 
 	REGION_INIT (screen, &region, (BoxPtr)NULL, 0);
 	uxa_damage_poly_fill_rect (&region, pDrawable, pGC, nrect, prect);
-	
+
 	UXA_FALLBACK(("to %p (%c)\n", pDrawable,
 		      uxa_drawable_location(pDrawable)));
 

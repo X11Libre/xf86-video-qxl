@@ -150,7 +150,7 @@ Bool qxl_pre_init_kms(ScrnInfoPtr pScrn, int flags)
 	xf86DrvMsg (scrnIndex, X_ERROR, "No Zaphod mode for you\n");
 	return FALSE;
     }
-    
+
     if (!pScrn->driverPrivate)
 	pScrn->driverPrivate = xnfcalloc (sizeof (qxl_screen_t), 1);
 
@@ -188,7 +188,7 @@ Bool qxl_pre_init_kms(ScrnInfoPtr pScrn, int flags)
 
     qxl->virtual_x = pScrn->virtualX;
     qxl->virtual_y = pScrn->virtualY;
-    
+
     pScrn->display->virtualX = qxl->virtual_x;
     pScrn->display->virtualY = qxl->virtual_y;
 
@@ -213,28 +213,28 @@ qxl_create_screen_resources_kms(ScreenPtr pScreen)
     Bool           ret;
     PixmapPtr      pPixmap;
     qxl_surface_t *surf;
-    
+
     pScreen->CreateScreenResources = qxl->create_screen_resources;
     ret = pScreen->CreateScreenResources (pScreen);
     pScreen->CreateScreenResources = qxl_create_screen_resources_kms;
-    
+
     if (!ret)
 	return FALSE;
-    
+
     pPixmap = pScreen->GetScreenPixmap (pScreen);
-    
+
     qxl_set_screen_pixmap_header (pScreen);
-    
+
     if ((surf = get_surface (pPixmap)))
         qxl->bo_funcs->destroy_surface(surf);
-    
+
     set_surface (pPixmap, qxl->primary);
 
     qxl_drmmode_uevent_init(pScrn, &qxl->drmmode);
 
     if (!uxa_resources_init (pScreen))
 	return FALSE;
-    
+
     qxl->screen_resources_created = TRUE;
     return TRUE;
 }
@@ -275,7 +275,7 @@ qxl_enter_vt_kms (VT_FUNC_ARGS_DECL)
 void
 qxl_leave_vt_kms (VT_FUNC_ARGS_DECL)
 {
-    SCRN_INFO_PTR (arg); 
+    SCRN_INFO_PTR (arg);
     int ret;
     qxl_screen_t *qxl = pScrn->driverPrivate;
     xf86_hide_cursors (pScrn);
@@ -311,7 +311,7 @@ Bool qxl_screen_init_kms(SCREEN_INIT_ARGS_DECL)
 
     if (!qxl_fb_init (qxl, pScreen))
 	goto out;
-    
+
     visual = pScreen->visuals + pScreen->numVisuals;
     while (--visual >= pScreen->visuals)
     {
@@ -325,7 +325,7 @@ Bool qxl_screen_init_kms(SCREEN_INIT_ARGS_DECL)
 	    visual->blueMask = pScrn->mask.blue;
 	}
     }
-    
+
     qxl->uxa = uxa_driver_alloc ();
 
 // GETPARAM
@@ -457,7 +457,7 @@ static void *qxl_bo_map(struct qxl_bo *_bo)
     memset(&qxl_map, 0, sizeof(qxl_map));
 
     qxl_map.handle = bo->handle;
-    
+
     if (drmIoctl(qxl->drm_fd, DRM_IOCTL_QXL_MAP, &qxl_map)) {
 	xf86DrvMsg(qxl->pScrn->scrnIndex, X_ERROR,
                    "error doing QXL_MAP: %s\n", strerror(errno));
@@ -501,7 +501,7 @@ static void qxl_bo_decref(qxl_screen_t *qxl, struct qxl_bo *_bo)
 	goto out;
     } else if (bo->mapping)
 	munmap(bo->mapping, bo->size);
-	
+
     /* just close the handle */
     args.handle = bo->handle;
     ret = drmIoctl(qxl->drm_fd, DRM_IOCTL_GEM_CLOSE, &args);
@@ -520,14 +520,14 @@ static void qxl_bo_output_bo_reloc(qxl_screen_t *qxl, uint32_t dst_offset,
     struct qxl_kms_bo *dst_bo = (struct qxl_kms_bo *)_dst_bo;
     struct qxl_kms_bo *src_bo = (struct qxl_kms_bo *)_src_bo;
     struct drm_qxl_reloc *r = &qxl->cmds.relocs[qxl->cmds.n_relocs];
-    
+
     if (qxl->cmds.n_reloc_bos >= MAX_RELOCS || qxl->cmds.n_relocs >= MAX_RELOCS)
       assert(0);
 
     qxl->cmds.reloc_bo[qxl->cmds.n_reloc_bos] = _src_bo;
     qxl->cmds.n_reloc_bos++;
     src_bo->refcnt++;
-      
+
     /* fix the kernel names */
     r->reloc_type = QXL_RELOC_TYPE_BO;
     r->dst_handle = dst_bo->handle;
@@ -776,7 +776,7 @@ void qxl_kms_setup_funcs(qxl_screen_t *qxl)
 uint32_t qxl_kms_bo_get_handle(struct qxl_bo *_bo)
 {
     struct qxl_kms_bo *bo = (struct qxl_kms_bo *)_bo;
-    
+
     return bo->handle;
 }
 #endif

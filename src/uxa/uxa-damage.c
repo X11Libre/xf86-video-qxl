@@ -108,7 +108,7 @@ trim_region (RegionPtr   pRegion,
     /* short circuit for empty regions */
     if (!REGION_NOTEMPTY(pScreen, pRegion))
         return;
-    
+
 #ifdef COMPOSITE
     /*
      * When drawing to a pixmap which is storing window contents,
@@ -123,7 +123,7 @@ trim_region (RegionPtr   pRegion,
     if (screen_x || screen_y)
         REGION_TRANSLATE (pScreen, pRegion, screen_x, screen_y);
 #endif
-    
+
     /* Clip against any children */
     if (pDrawable->type == DRAWABLE_WINDOW &&
         ((WindowPtr)(pDrawable))->backingStore == NotUseful)
@@ -167,23 +167,23 @@ trim_region (RegionPtr   pRegion,
 	    draw_y += ((PixmapPtr) pDrawable)->screen_y;
 	}
 #endif
-	
+
 	box.x1 = draw_x;
 	box.y1 = draw_y;
 	box.x2 = draw_x + pDrawable->width;
 	box.y2 = draw_y + pDrawable->height;
-	
+
 	REGION_INIT(pScreen, &pixClip, &box, 1);
 	REGION_INTERSECT (pScreen, pRegion, pRegion, &pixClip);
 	REGION_UNINIT(pScreen, &pixClip);
     }
-    
+
     /*
      * Move region to target coordinate space
      */
     if (draw_x || draw_y)
 	REGION_TRANSLATE (pScreen, pRegion, -draw_x, -draw_y);
-    
+
     /* Now do something with the damage */
 }
 
@@ -194,7 +194,7 @@ add_region (RegionPtr	existing,
 	    int         subWindowMode)
 {
     trim_region (new, pDrawable, subWindowMode);
-    
+
     REGION_UNION (pDrawable->pScreen, existing, existing, new);
 }
 
@@ -205,11 +205,11 @@ add_box (RegionPtr   existing,
 	 int	     subwindow_mode)
 {
     RegionRec   region;
-    
+
     REGION_INIT (pDrawable->pScreen, &region, box, 1);
-    
+
     add_region (existing, &region, drawable, subwindow_mode);
-    
+
     REGION_UNINIT (pDrawable->pScreen, &region);
 }
 
@@ -232,14 +232,14 @@ uxa_damage_composite (RegionPtr  region,
     if (checkPictureDamage (pDst))
     {
 	BoxRec	box;
-	
+
 	box.x1 = xDst + pDst->pDrawable->x;
 	box.y1 = yDst + pDst->pDrawable->y;
 	box.x2 = box.x1 + width;
 	box.y2 = box.y1 + height;
-	
+
 	TRIM_PICTURE_BOX(box, pDst);
-	
+
 	if (BOX_NOT_EMPTY(box))
 	    add_box (region, &box, pDst->pDrawable, pDst->subWindowMode);
     }
@@ -267,7 +267,7 @@ uxa_damage_glyphs (RegionPtr		region,
 	GlyphPtr	glyph;
 	BoxRec		box;
 	int		x1, y1, x2, y2;
-	
+
 	box.x1 = 32767;
 	box.y1 = 32767;
 	box.x2 = -32767;
@@ -319,7 +319,7 @@ uxa_damage_add_traps (RegionPtr   region,
 	int	i;
 	int	x, y;
 	xTrap	*t = traps;
-	
+
 	box.x1 = 32767;
 	box.y1 = 32767;
 	box.x2 = -32767;
@@ -334,7 +334,7 @@ uxa_damage_add_traps (RegionPtr   region,
 	    int	    x2 = x + pixman_fixed_to_int (pixman_fixed_ceil (r));
 	    int	    y1 = y + pixman_fixed_to_int (t->top.y);
 	    int	    y2 = y + pixman_fixed_to_int (pixman_fixed_ceil (t->bot.y));
-	    
+
 	    if (x1 < box.x1)
 		box.x1 = x1;
 	    if (x2 > box.x2)
@@ -368,12 +368,12 @@ uxa_damage_fill_spans (RegionPtr   region,
 	DDXPointPtr pptTmp = ppt;
 	int	    *pwidthTmp = pwidth;
 	BoxRec	    box;
-	
+
 	box.x1 = pptTmp->x;
 	box.x2 = box.x1 + *pwidthTmp;
 	box.y2 = box.y1 = pptTmp->y;
-	
-	while(--nptTmp) 
+
+	while(--nptTmp)
 	{
 	    pptTmp++;
 	    pwidthTmp++;
@@ -383,14 +383,14 @@ uxa_damage_fill_spans (RegionPtr   region,
 	    if(box.y1 > pptTmp->y) box.y1 = pptTmp->y;
 	    else if(box.y2 < pptTmp->y) box.y2 = pptTmp->y;
 	}
-	
+
 	box.y2++;
-	
+
         if(!pGC->miTranslate) {
 	    TRANSLATE_BOX(box, pDrawable);
         }
-        TRIM_BOX(box, pGC); 
-	
+        TRIM_BOX(box, pGC);
+
 	if(BOX_NOT_EMPTY(box))
 	    add_box (region, &box, pDrawable, pGC->subWindowMode);
     }
@@ -412,12 +412,12 @@ uxa_damage_set_spans (RegionPtr    region,
 	int	    *pwidthTmp = pwidth;
 	int	    nptTmp = npt;
 	BoxRec	    box;
-	
+
 	box.x1 = pptTmp->x;
 	box.x2 = box.x1 + *pwidthTmp;
 	box.y2 = box.y1 = pptTmp->y;
-	
-	while(--nptTmp) 
+
+	while(--nptTmp)
 	{
 	    pptTmp++;
 	    pwidthTmp++;
@@ -427,14 +427,14 @@ uxa_damage_set_spans (RegionPtr    region,
 	    if(box.y1 > pptTmp->y) box.y1 = pptTmp->y;
 	    else if(box.y2 < pptTmp->y) box.y2 = pptTmp->y;
 	}
-	
+
 	box.y2++;
-	
+
         if(!pGC->miTranslate) {
 	    TRANSLATE_BOX(box, pDrawable);
         }
-        TRIM_BOX(box, pGC); 
-	
+        TRIM_BOX(box, pGC);
+
 	if(BOX_NOT_EMPTY(box))
 	    add_box (region, &box, pDrawable, pGC->subWindowMode);
     }
@@ -456,12 +456,12 @@ uxa_damage_put_image (RegionPtr    region,
     if (checkGCDamage (pGC))
     {
 	BoxRec box;
-	
+
 	box.x1 = x + pDrawable->x;
 	box.x2 = box.x1 + w;
 	box.y1 = y + pDrawable->y;
 	box.y2 = box.y1 + h;
-	
+
 	TRIM_BOX(box, pGC);
 	if(BOX_NOT_EMPTY(box))
 	    add_box (region, &box, pDrawable, pGC->subWindowMode);
@@ -483,12 +483,12 @@ uxa_damage_copy_area(RegionPtr    region,
     if (checkGCDamage (pGC))
     {
 	BoxRec box;
-	
+
 	box.x1 = dstx + pDst->x;
 	box.x2 = box.x1 + width;
 	box.y1 = dsty + pDst->y;
 	box.y2 = box.y1 + height;
-	
+
 	TRIM_BOX(box, pGC);
 	if(BOX_NOT_EMPTY(box))
 	    add_box (region, &box, pDst, pGC->subWindowMode);
@@ -511,12 +511,12 @@ uxa_damage_copy_plane (RegionPtr	region,
     if (checkGCDamage (pGC))
     {
 	BoxRec box;
-	
+
 	box.x1 = dstx + pDst->x;
 	box.x2 = box.x1 + width;
 	box.y1 = dsty + pDst->y;
 	box.y2 = box.y1 + height;
-	
+
 	TRIM_BOX(box, pGC);
 	if(BOX_NOT_EMPTY(box))
 	    add_box (region, &box, pDst, pGC->subWindowMode);
@@ -536,13 +536,13 @@ uxa_damage_poly_point (RegionPtr   region,
 	BoxRec	box;
 	int	nptTmp = npt;
 	xPoint	*pptTmp = ppt;
-	
+
 	box.x2 = box.x1 = pptTmp->x;
 	box.y2 = box.y1 = pptTmp->y;
-	
+
 	/* this could be slow if the points were spread out */
-	
-	while(--nptTmp) 
+
+	while(--nptTmp)
 	{
 	    pptTmp++;
 	    if(box.x1 > pptTmp->x) box.x1 = pptTmp->x;
@@ -550,10 +550,10 @@ uxa_damage_poly_point (RegionPtr   region,
 	    if(box.y1 > pptTmp->y) box.y1 = pptTmp->y;
 	    else if(box.y2 < pptTmp->y) box.y2 = pptTmp->y;
 	}
-	
+
 	box.x2++;
 	box.y2++;
-	
+
 	TRIM_AND_TRANSLATE_BOX(box, pDrawable, pGC);
 	if(BOX_NOT_EMPTY(box))
 	    add_box (region, &box, pDrawable, pGC->subWindowMode);
@@ -574,23 +574,23 @@ uxa_damage_poly_lines (RegionPtr  region,
 	DDXPointPtr pptTmp = ppt;
 	BoxRec	    box;
 	int	    extra = pGC->lineWidth >> 1;
-	
+
 	box.x2 = box.x1 = pptTmp->x;
 	box.y2 = box.y1 = pptTmp->y;
-	
-	if(nptTmp > 1) 
+
+	if(nptTmp > 1)
 	{
 	    if(pGC->joinStyle == JoinMiter)
 		extra = 6 * pGC->lineWidth;
 	    else if(pGC->capStyle == CapProjecting)
 		extra = pGC->lineWidth;
         }
-	
-	if(mode == CoordModePrevious) 
+
+	if(mode == CoordModePrevious)
 	{
 	    int x = box.x1;
 	    int y = box.y1;
-	    while(--nptTmp) 
+	    while(--nptTmp)
 	    {
 		pptTmp++;
 		x += pptTmp->x;
@@ -601,9 +601,9 @@ uxa_damage_poly_lines (RegionPtr  region,
 		else if(box.y2 < y) box.y2 = y;
 	    }
 	}
-	else 
+	else
 	{
-	    while(--nptTmp) 
+	    while(--nptTmp)
 	    {
 		pptTmp++;
 		if(box.x1 > pptTmp->x) box.x1 = pptTmp->x;
@@ -612,18 +612,18 @@ uxa_damage_poly_lines (RegionPtr  region,
 		else if(box.y2 < pptTmp->y) box.y2 = pptTmp->y;
 	    }
 	}
-	
+
 	box.x2++;
 	box.y2++;
-	
-	if(extra) 
+
+	if(extra)
 	{
 	    box.x1 -= extra;
 	    box.x2 += extra;
 	    box.y1 -= extra;
 	    box.y2 += extra;
         }
-	
+
 	TRIM_AND_TRANSLATE_BOX(box, pDrawable, pGC);
 	if(BOX_NOT_EMPTY(box))
 	    add_box (region, &box, pDrawable, pGC->subWindowMode);
@@ -643,10 +643,10 @@ uxa_damage_poly_segment (RegionPtr    region,
 	int	    extra = pGC->lineWidth;
 	int	    nsegTmp = nSeg;
 	xSegment    *pSegTmp = pSeg;
-	
+
         if(pGC->capStyle != CapProjecting)
 	    extra >>= 1;
-	
+
 	if(pSegTmp->x2 > pSegTmp->x1) {
 	    box.x1 = pSegTmp->x1;
 	    box.x2 = pSegTmp->x2;
@@ -654,7 +654,7 @@ uxa_damage_poly_segment (RegionPtr    region,
 	    box.x2 = pSegTmp->x1;
 	    box.x1 = pSegTmp->x2;
 	}
-	
+
 	if(pSegTmp->y2 > pSegTmp->y1) {
 	    box.y1 = pSegTmp->y1;
 	    box.y2 = pSegTmp->y2;
@@ -662,21 +662,21 @@ uxa_damage_poly_segment (RegionPtr    region,
 	    box.y2 = pSegTmp->y1;
 	    box.y1 = pSegTmp->y2;
 	}
-	
-	while(--nsegTmp) 
+
+	while(--nsegTmp)
 	{
 	    pSegTmp++;
-	    if(pSegTmp->x2 > pSegTmp->x1) 
+	    if(pSegTmp->x2 > pSegTmp->x1)
 	    {
 		if(pSegTmp->x1 < box.x1) box.x1 = pSegTmp->x1;
 		if(pSegTmp->x2 > box.x2) box.x2 = pSegTmp->x2;
 	    }
-	    else 
+	    else
 	    {
 		if(pSegTmp->x2 < box.x1) box.x1 = pSegTmp->x2;
 		if(pSegTmp->x1 > box.x2) box.x2 = pSegTmp->x1;
 	    }
-	    if(pSegTmp->y2 > pSegTmp->y1) 
+	    if(pSegTmp->y2 > pSegTmp->y1)
 	    {
 		if(pSegTmp->y1 < box.y1) box.y1 = pSegTmp->y1;
 		if(pSegTmp->y2 > box.y2) box.y2 = pSegTmp->y2;
@@ -687,18 +687,18 @@ uxa_damage_poly_segment (RegionPtr    region,
 		if(pSegTmp->y1 > box.y2) box.y2 = pSegTmp->y1;
 	    }
 	}
-	
+
 	box.x2++;
 	box.y2++;
-	
-	if(extra) 
+
+	if(extra)
 	{
 	    box.x1 -= extra;
 	    box.x2 += extra;
 	    box.y1 -= extra;
 	    box.y2 += extra;
         }
-	
+
 	TRIM_AND_TRANSLATE_BOX(box, pDrawable, pGC);
 	if(BOX_NOT_EMPTY(box))
 	    add_box (region, &box, pDrawable, pGC->subWindowMode);
@@ -718,12 +718,12 @@ uxa_damage_poly_rectangle (RegionPtr    region,
 	int	    offset1, offset2, offset3;
 	int	    nRectsTmp = nRects;
 	xRectangle  *pRectsTmp = pRects;
-	
+
 	offset2 = pGC->lineWidth;
 	if(!offset2) offset2 = 1;
 	offset1 = offset2 >> 1;
 	offset3 = offset2 - offset1;
-	
+
 	while(nRectsTmp--)
 	{
 	    box.x1 = pRectsTmp->x - offset1;
@@ -733,7 +733,7 @@ uxa_damage_poly_rectangle (RegionPtr    region,
 	    TRIM_AND_TRANSLATE_BOX(box, pDrawable, pGC);
 	    if(BOX_NOT_EMPTY(box))
 		add_box (region, &box, pDrawable, pGC->subWindowMode);
-	    
+
 	    box.x1 = pRectsTmp->x - offset1;
 	    box.y1 = pRectsTmp->y + offset3;
 	    box.x2 = box.x1 + offset2;
@@ -741,7 +741,7 @@ uxa_damage_poly_rectangle (RegionPtr    region,
 	    TRIM_AND_TRANSLATE_BOX(box, pDrawable, pGC);
 	    if(BOX_NOT_EMPTY(box))
 		add_box (region, &box, pDrawable, pGC->subWindowMode);
-	    
+
 	    box.x1 = pRectsTmp->x + pRectsTmp->width - offset1;
 	    box.y1 = pRectsTmp->y + offset3;
 	    box.x2 = box.x1 + offset2;
@@ -749,7 +749,7 @@ uxa_damage_poly_rectangle (RegionPtr    region,
 	    TRIM_AND_TRANSLATE_BOX(box, pDrawable, pGC);
 	    if(BOX_NOT_EMPTY(box))
 		add_box (region, &box, pDrawable, pGC->subWindowMode);
-	    
+
 	    box.x1 = pRectsTmp->x - offset1;
 	    box.y1 = pRectsTmp->y + pRectsTmp->height - offset1;
 	    box.x2 = box.x1 + pRectsTmp->width + offset2;
@@ -757,7 +757,7 @@ uxa_damage_poly_rectangle (RegionPtr    region,
 	    TRIM_AND_TRANSLATE_BOX(box, pDrawable, pGC);
 	    if(BOX_NOT_EMPTY(box))
 		add_box (region, &box, pDrawable, pGC->subWindowMode);
-	    
+
 	    pRectsTmp++;
 	}
     }
@@ -776,36 +776,36 @@ uxa_damage_poly_arc (RegionPtr    region,
 	BoxRec	box;
 	int	nArcsTmp = nArcs;
 	xArc	*pArcsTmp = pArcs;
-	
+
 	box.x1 = pArcsTmp->x;
 	box.x2 = box.x1 + pArcsTmp->width;
 	box.y1 = pArcsTmp->y;
 	box.y2 = box.y1 + pArcsTmp->height;
-	
-	while(--nArcsTmp) 
+
+	while(--nArcsTmp)
 	{
 	    pArcsTmp++;
 	    if(box.x1 > pArcsTmp->x)
 		box.x1 = pArcsTmp->x;
 	    if(box.x2 < (pArcsTmp->x + pArcsTmp->width))
 		box.x2 = pArcsTmp->x + pArcsTmp->width;
-	    if(box.y1 > pArcsTmp->y) 
+	    if(box.y1 > pArcsTmp->y)
 		box.y1 = pArcsTmp->y;
 	    if(box.y2 < (pArcsTmp->y + pArcsTmp->height))
 		box.y2 = pArcsTmp->y + pArcsTmp->height;
         }
-	
-	if(extra) 
+
+	if(extra)
 	{
 	    box.x1 -= extra;
 	    box.x2 += extra;
 	    box.y1 -= extra;
 	    box.y2 += extra;
         }
-	
+
 	box.x2++;
 	box.y2++;
-	
+
 	TRIM_AND_TRANSLATE_BOX(box, pDrawable, pGC);
 	if(BOX_NOT_EMPTY(box))
 	    add_box (region, &box, pDrawable, pGC->subWindowMode);
@@ -826,15 +826,15 @@ uxa_damage_fill_polygon (RegionPtr     region,
 	DDXPointPtr pptTmp = ppt;
 	int	    nptTmp = npt;
 	BoxRec	    box;
-	
+
 	box.x2 = box.x1 = pptTmp->x;
 	box.y2 = box.y1 = pptTmp->y;
-	
-	if(mode != CoordModeOrigin) 
+
+	if(mode != CoordModeOrigin)
 	{
 	    int x = box.x1;
 	    int y = box.y1;
-	    while(--nptTmp) 
+	    while(--nptTmp)
 	    {
 		pptTmp++;
 		x += pptTmp->x;
@@ -845,9 +845,9 @@ uxa_damage_fill_polygon (RegionPtr     region,
 		else if(box.y2 < y) box.y2 = y;
 	    }
 	}
-	else 
+	else
 	{
-	    while(--nptTmp) 
+	    while(--nptTmp)
 	    {
 		pptTmp++;
 		if(box.x1 > pptTmp->x) box.x1 = pptTmp->x;
@@ -856,10 +856,10 @@ uxa_damage_fill_polygon (RegionPtr     region,
 		else if(box.y2 < pptTmp->y) box.y2 = pptTmp->y;
 	    }
 	}
-	
+
 	box.x2++;
 	box.y2++;
-	
+
 	TRIM_AND_TRANSLATE_BOX(box, pDrawable, pGC);
 	if(BOX_NOT_EMPTY(box))
 	    add_box (region, &box, pDrawable, pGC->subWindowMode);
@@ -908,13 +908,13 @@ uxa_damage_poly_fill_arc (RegionPtr    region,
 	BoxRec	box;
 	int	nArcsTmp = nArcs;
 	xArc	*pArcsTmp = pArcs;
-	
+
 	box.x1 = pArcsTmp->x;
 	box.x2 = box.x1 + pArcsTmp->width;
 	box.y1 = pArcsTmp->y;
 	box.y2 = box.y1 + pArcsTmp->height;
-	
-	while(--nArcsTmp) 
+
+	while(--nArcsTmp)
 	{
 	    pArcsTmp++;
 	    if(box.x1 > pArcsTmp->x)
@@ -926,7 +926,7 @@ uxa_damage_poly_fill_arc (RegionPtr    region,
 	    if(box.y2 < (pArcsTmp->y + pArcsTmp->height))
 		box.y2 = pArcsTmp->y + pArcsTmp->height;
         }
-	
+
 	TRIM_AND_TRANSLATE_BOX(box, pDrawable, pGC);
 	if(BOX_NOT_EMPTY(box))
 	    add_box (region, &box, pDrawable, pGC->subWindowMode);
@@ -1002,13 +1002,13 @@ uxa_damage_text (RegionPtr	region,
     unsigned int    n;
     int		    w;
     Bool	    imageblt;
-    
+
     imageblt = (textType == TT_IMAGE8) || (textType == TT_IMAGE16);
-    
+
     charinfo = malloc(count * sizeof(CharInfoPtr));
     if (!charinfo)
 	return x;
-    
+
     GetGlyphs(pGC->font, count, (unsigned char *)chars,
 	      fontEncoding, &i, charinfo);
     n = (unsigned int)i;
@@ -1016,7 +1016,7 @@ uxa_damage_text (RegionPtr	region,
     if (!imageblt)
 	for (info = charinfo; i--; info++)
 	    w += (*info)->metrics.characterWidth;
-    
+
     if (n != 0) {
 	uxa_damage_chars (region,
 			  pDrawable, pGC->font, x + pDrawable->x, y + pDrawable->y, n,
@@ -1056,7 +1056,7 @@ uxa_damage_poly_text_16 (RegionPtr	region,
 			     pDrawable, pGC, x, y, (unsigned long) count, (char *) chars,
 			     FONTLASTROW(pGC->font) == 0 ? Linear16Bit : TwoD16Bit,
 			     TT_POLY16);
-    
+
     return x;
 }
 
@@ -1135,18 +1135,18 @@ uxa_damage_push_pixels (RegionPtr	region,
     if(checkGCDamage (pGC))
     {
 	BoxRec box;
-	
+
         box.x1 = xOrg;
         box.y1 = yOrg;
-	
+
         if(!pGC->miTranslate) {
-	    box.x1 += pDrawable->x;          
-	    box.y1 += pDrawable->y;          
+	    box.x1 += pDrawable->x;
+	    box.y1 += pDrawable->y;
         }
-	
+
 	box.x2 = box.x1 + dx;
 	box.y2 = box.y1 + dy;
-	
+
 	TRIM_BOX(box, pGC);
 	if(BOX_NOT_EMPTY(box))
 	    add_box (region, &box, pDrawable, pGC->subWindowMode);
@@ -1164,7 +1164,7 @@ uxa_damage_copy_window(RegionPtr	region,
     damageScrPriv(pScreen);
     int dx = pWindow->drawable.x - ptOldOrg.x;
     int dy = pWindow->drawable.y - ptOldOrg.y;
-    
+
     /*
      * The region comes in source relative, but the damage occurs
      * at the destination location.  Translate back and forth.
@@ -1173,6 +1173,6 @@ uxa_damage_copy_window(RegionPtr	region,
     damageRegionAppend (&pWindow->drawable, prgnSrc, FALSE, -1);
     REGION_TRANSLATE (pScreen, prgnSrc, -dx, -dy);
 #endif
-    
+
     /* FIXME */
 }

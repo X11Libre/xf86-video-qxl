@@ -149,7 +149,7 @@ void spiceqxl_vdagent_init(qxl_screen_t *qxl)
     if (!enabled || !vdagent_virtio_filename) {
         return;
     }
-    
+
     virtio_fd = socket(PF_UNIX, SOCK_STREAM, 0);
     if (virtio_fd == -1) {
         fprintf(stderr, "error creating unix domain socket\n");

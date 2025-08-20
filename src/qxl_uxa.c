@@ -181,7 +181,7 @@ can_accelerate_picture (qxl_screen_t *qxl, PicturePtr pict)
             ErrorF ("Source image (of type %d) can't be accelerated\n",
                     pict->pSourcePict->type);
         }
-     
+
 	return FALSE;
     }
 

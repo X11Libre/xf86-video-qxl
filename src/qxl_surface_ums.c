@@ -34,7 +34,7 @@
  * A 'dead' surface is one that the X server is no using any more, but
  * is still allocated in the device. These surfaces may be stored in the
  * cache, from where they can be resurrected. The cache holds a ref on the
- * surfaces. 
+ * surfaces.
  *
  * A 'destroyed' surface is one whose ref count has reached 0. It is no
  * longer being referenced by either the server or the device or the cache.
@@ -75,7 +75,7 @@ struct evacuated_surface_t
 struct surface_cache_t
 {
     qxl_screen_t *qxl;
-    
+
     /* Array of surfaces (not a linked list).
      * All surfaces, excluding the primary one, indexed by surface id.
      */
@@ -149,10 +149,10 @@ surface_cache_init (surface_cache_t *cache, qxl_screen_t *qxl)
 
     memset (cache->all_surfaces, 0, n_surfaces * sizeof (qxl_surface_t));
     memset (cache->cached_surfaces, 0, N_CACHED_SURFACES * sizeof (qxl_surface_t *));
-    
+
     cache->free_surfaces = NULL;
     cache->live_surfaces = NULL;
-    
+
     for (i = 0; i < n_surfaces; ++i)
     {
 	cache->all_surfaces[i].id = i;
@@ -161,7 +161,7 @@ surface_cache_init (surface_cache_t *cache, qxl_screen_t *qxl)
 	cache->all_surfaces[i].dev_image = NULL;
 	cache->all_surfaces[i].host_image = NULL;
 	cache->all_surfaces[i].evacuated = NULL;
-	
+
 	REGION_INIT (
 	    NULL, &(cache->all_surfaces[i].access_region), (BoxPtr)NULL, 0);
 	cache->all_surfaces[i].access_type = UXA_ACCESS_RO;
@@ -251,7 +251,7 @@ surface_get_from_cache (surface_cache_t *cache, int width, int height, int bpp)
 	{
 	    int w = pixman_image_get_width (s->host_image);
 	    int h = pixman_image_get_height (s->host_image);
-	    
+
 	    if (width <= w && width * 4 > w && height <= h && height * 4 > h)
 	    {
 		cache->cached_surfaces[i] = NULL;
@@ -317,7 +317,7 @@ qxl_surface_cache_create_primary (qxl_screen_t *qxl,
     dev_image = pixman_image_create_bits (format, mode->x_res, mode->y_res,
 					  (uint32_t *)dev_addr, (qxl->kms_enabled ? mode->stride : -mode->stride));
 
-    host_image = pixman_image_create_bits (format, 
+    host_image = pixman_image_create_bits (format,
 					   qxl->virtual_x, qxl->virtual_y,
 					   NULL, mode->stride);
 #if 0
@@ -342,10 +342,10 @@ qxl_surface_cache_create_primary (qxl_screen_t *qxl,
     surface->evacuated = NULL;
     surface->bo = bo;
     surface->image_bo = NULL;
-    
+
     REGION_INIT (NULL, &(surface->access_region), (BoxPtr)NULL, 0);
     surface->access_type = UXA_ACCESS_RO;
-    
+
     return surface;
 }
 
@@ -374,7 +374,7 @@ make_surface_cmd (surface_cache_t *cache, uint32_t id, QXLSurfaceCmdType type)
     cmd->type = type;
     cmd->flags = 0;
     cmd->surface_id = id;
-    
+
     qxl->bo_funcs->bo_unmap(cmd_bo);
     return cmd_bo;
 }
@@ -383,7 +383,7 @@ static void
 push_surface_cmd (surface_cache_t *cache, struct qxl_bo *cmd_bo)
 {
     qxl_screen_t *qxl = cache->qxl;
-    
+
     qxl->bo_funcs->write_command (qxl, QXL_CMD_SURFACE, cmd_bo);
 }
 
@@ -414,7 +414,7 @@ surface_get_from_free_list (surface_cache_t *cache)
 	    assert (s->id != result->id);
 	}
     }
-    
+
     return result;
 }
 
@@ -441,14 +441,14 @@ surface_send_create (surface_cache_t *cache,
     struct qxl_bo *bo, *cmd_bo;
     void *dev_ptr;
     qxl_get_formats (bpp, &format, &pformat);
-    
+
     width = align (width);
     height = align (height);
-    
+
     stride = width * PIXMAN_FORMAT_BPP (pformat) / 8;
     stride = (stride + 3) & ~3;
 
-    /* the final + stride is to work around a bug where the device apparently 
+    /* the final + stride is to work around a bug where the device apparently
      * scribbles after the end of the image
      */
     qxl_garbage_collect (qxl);
@@ -464,7 +464,7 @@ retry2:
 
 	ErrorF ("- OOM at %d %d %d (= %d bytes)\n", width, height, bpp, width * height * (bpp / 8));
 	print_cache_info (cache);
-	
+
 	if (qxl_handle_oom (qxl))
 	{
 	    while (qxl_garbage_collect (qxl))
@@ -474,7 +474,7 @@ retry2:
 
 	ErrorF ("Out of video memory: Could not allocate %d bytes\n",
 		stride * height + stride);
-	
+
 	return NULL;
     }
 
@@ -493,7 +493,7 @@ retry:
     }
 
     surface->bo = bo;
-    
+
     cmd_bo = make_surface_cmd (cache, surface->id, QXL_SURFACE_CMD_CREATE);
 
     cmd = qxl->bo_funcs->bo_map(cmd_bo);
@@ -521,7 +521,7 @@ retry:
     surface->bpp = bpp;
 
     n_live++;
-    
+
     return surface;
 }
 
@@ -536,7 +536,7 @@ qxl_surface_create (qxl_screen_t *qxl,
 
     if (!qxl->enable_surfaces)
 	return NULL;
-    
+
     if ((bpp & 3) != 0)
     {
 	ErrorF ("%s: Bad bpp: %d (%d)\n", __FUNCTION__, bpp, bpp & 7);
@@ -552,11 +552,11 @@ qxl_surface_create (qxl_screen_t *qxl,
 	    warned = 1;
 	    ErrorF ("bpp == 8 triggers bugs in spice apparently\n");
 	}
-	
+
 	return NULL;
       }
 #endif
-    
+
     if (bpp != 8 && bpp != 16 && bpp != 32 && bpp != 24)
     {
 	ErrorF ("%s: Unknown bpp\n", __FUNCTION__);
@@ -578,7 +578,7 @@ qxl_surface_create (qxl_screen_t *qxl,
     if (cache->live_surfaces)
 	cache->live_surfaces->prev = surface;
     cache->live_surfaces = surface;
-    
+
     return surface;
 }
 
@@ -602,12 +602,12 @@ unlink_surface (qxl_surface_t *surface)
     }
 
     debug_surface_log(surface->cache);
-    
+
     if (surface->next)
 	surface->next->prev = surface->prev;
 
     surface->pixmap = NULL;
-    
+
     surface->prev = NULL;
     surface->next = NULL;
 }
@@ -643,7 +643,7 @@ surface_add_to_cache (qxl_surface_t *surface)
     qxl_surface_t *destroy_surface = NULL;
 
     surface->ref_count++;
-    
+
     for (i = 0; i < N_CACHED_SURFACES; ++i)
     {
 	if (cache->cached_surfaces[i])
@@ -652,20 +652,20 @@ surface_add_to_cache (qxl_surface_t *surface)
 	    n_surfaces++;
 	}
     }
-    
+
     if (n_surfaces == N_CACHED_SURFACES)
     {
 	destroy_id = cache->cached_surfaces[oldest]->id;
-	
+
 	destroy_surface = cache->cached_surfaces[oldest];
-	
+
 	cache->cached_surfaces[oldest] = NULL;
-	
+
 	for (i = 0; i < N_CACHED_SURFACES; ++i)
 	    assert (!cache->cached_surfaces[i] ||
 		    cache->cached_surfaces[i]->id != destroy_id);
     }
-    
+
     delta = 0;
     for (i = N_CACHED_SURFACES - 1; i >= 0; i--)
     {
@@ -675,9 +675,9 @@ surface_add_to_cache (qxl_surface_t *surface)
 	    {
 		cache->cached_surfaces[i + delta] =
 		    cache->cached_surfaces[i];
-		
+
 		assert (cache->cached_surfaces[i + delta]->id != destroy_id);
-		
+
 		cache->cached_surfaces[i] = NULL;
 	    }
 	}
@@ -686,11 +686,11 @@ surface_add_to_cache (qxl_surface_t *surface)
 	    delta++;
 	}
     }
-    
+
     assert (delta > 0);
-    
+
     cache->cached_surfaces[i + delta] = surface;
-    
+
     for (i = 0; i < N_CACHED_SURFACES; ++i)
 	assert (!cache->cached_surfaces[i] || cache->cached_surfaces[i]->id != destroy_id);
 
@@ -748,7 +748,7 @@ qxl_surface_kill (qxl_surface_t *surface)
     {
 	surface_add_to_cache (surface);
     }
-    
+
     qxl_surface_unref (surface->cache, surface->id);
 }
 
@@ -785,13 +785,13 @@ qxl_surface_cache_evacuate_all (surface_cache_t *cache)
 	evacuated->pixmap = s->pixmap;
 
 	assert (get_surface (evacuated->pixmap) == s);
-	
+
 	evacuated->bpp = s->bpp;
-	
+
 	s->host_image = NULL;
 
 	unlink_surface (s);
-	
+
 	evacuated->prev = NULL;
 	evacuated->next = evacuated_surfaces;
         if (evacuated_surfaces)
@@ -818,7 +818,7 @@ qxl_surface_cache_replace_all (surface_cache_t *cache, void *data)
 	/* FIXME: report the error */
 	return;
     }
-    
+
     ev = data;
     while (ev != NULL)
     {
@@ -842,7 +842,7 @@ qxl_surface_cache_replace_all (surface_cache_t *cache, void *data)
 	qxl_surface_set_pixmap (surface, ev->pixmap);
 
 	free (ev);
-	
+
 	ev = next;
     }
 

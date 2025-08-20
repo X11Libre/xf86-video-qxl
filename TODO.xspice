@@ -14,7 +14,7 @@ TODO:
  Keyboard:
   * repeat (xset r 100) does nothing. This is because spice client
    of course does repeat. But would be nice to transmit this.
- 
+
  Video: youtube seemed choppy, some frames were repeating (cpu 30%~, so not
   cpu bound). Possible multimedia time? Isn't this set by the driver, i.e.
   should be identical with in vm qxl driver?

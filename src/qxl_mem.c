@@ -102,9 +102,9 @@ qxl_mem_create       (void                   *base,
 
     ErrorF ("memory space from %p to %p\n", base, (char *)base + n_bytes);
 
-    
+
     mem->space = create_mspace_with_base (base, n_bytes, 0, NULL);
-    
+
     mem->base = base;
     mem->n_bytes = n_bytes;
 
@@ -553,7 +553,7 @@ struct qxl_bo *qxl_ums_lookup_phy_addr(qxl_screen_t *qxl, uint64_t phy_addr)
 
     slot_id = qxl->main_mem_slot;
     virt_addr = (void *)virtual_address(qxl, u64_to_pointer(phy_addr), slot_id);
-    
+
     xorg_list_for_each_entry(bo, &qxl->ums_bos, bos) {
 	if (bo->internal_virt_addr == virt_addr && bo->type == QXL_BO_DATA) {
 	    found = bo;
@@ -598,10 +598,10 @@ static void qxl_bo_write_command(qxl_screen_t *qxl, uint32_t cmd_type, struct qx
 {
     struct QXLCommand cmd;
 
-    /* When someone runs "init 3", the device will be 
+    /* When someone runs "init 3", the device will be
      * switched into VGA mode and there is nothing we
      * can do about it. We get no notification.
-     * 
+     *
      * However, if commands are submitted when the device
      * is in VGA mode, they will be queued up, and then
      * the next time a mode set set, an assertion in the
@@ -628,7 +628,7 @@ static void qxl_bo_write_command(qxl_screen_t *qxl, uint32_t cmd_type, struct qx
 static void qxl_bo_update_area(qxl_surface_t *surf, int x1, int y1, int x2, int y2)
 {
     struct QXLRam *ram_header = get_ram_header(surf->qxl);
-    
+
     ram_header->update_area.top = y1;
     ram_header->update_area.bottom = y2;
     ram_header->update_area.left = x1;
