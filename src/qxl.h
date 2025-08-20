@@ -187,7 +187,7 @@ struct qxl_bo_funcs {
 				 qxl_surface_t *surf);
   /* surface create / destroy */
 };
-    
+
 void qxl_ums_setup_funcs(qxl_screen_t *qxl);
 void qxl_kms_setup_funcs(qxl_screen_t *qxl);
 
@@ -218,7 +218,7 @@ struct _qxl_screen_t
     void *			vram;	/* Surface RAM */
     void *			vram_physical;
     struct QXLRom *		rom;    /* Parameter RAM */
-    
+
     struct qxl_ring *		command_ring;
     struct qxl_ring *		cursor_ring;
     struct qxl_ring *		release_ring;
@@ -246,7 +246,7 @@ struct _qxl_screen_t
     struct QXLMonitorsConfig   *monitors_config;
     int                         monitors_config_size;
     int                         mem_size;
-    
+
     int				bytes_per_pixel;
 
     /* Commands */
@@ -254,7 +254,7 @@ struct _qxl_screen_t
 
     /* Surfaces */
     struct qxl_mem *		surf_mem;  /* Context for qxl_surf_alloc/free */
-    
+
     EntityInfoPtr		entity;
 
     int                         num_heads;
@@ -274,17 +274,17 @@ struct _qxl_screen_t
 #endif /* XSPICE */
 
     uxa_driver_t *		uxa;
-    
+
     CreateScreenResourcesProcPtr create_screen_resources;
     CloseScreenProcPtr		close_screen;
     CreateGCProcPtr		create_gc;
     CopyWindowProcPtr		copy_window;
-    
+
     int16_t			cur_x;
     int16_t			cur_y;
     int16_t			hot_x;
     int16_t			hot_y;
-    
+
     ScrnInfoPtr			pScrn;
 
     qxl_memslot_t *		mem_slots;
@@ -308,7 +308,7 @@ struct _qxl_screen_t
     int				enable_fallback_cache;
     int				enable_surfaces;
     int                         debug_render_fallbacks;
-    
+
     FrameTimer *        frames_timer;
 
 #ifdef XSPICE

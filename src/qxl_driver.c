@@ -204,7 +204,7 @@ map_memory_helper (qxl_screen_t *qxl)
     qxl->vram = calloc (qxl->vram_size, 1);
     qxl->vram_physical = qxl->vram;
     qxl->rom = calloc (ROM_SIZE, 1);
-    
+
     init_qxl_rom (qxl, ROM_SIZE);
 }
 
@@ -242,18 +242,18 @@ map_memory_helper (qxl_screen_t *qxl)
                           &qxl->ram);
     qxl->ram_physical = u64_to_pointer (qxl->pci->regions[0].base_addr);
     qxl->ram_size = qxl->pci->regions[0].size;
-    
+
     pci_device_map_range (qxl->pci, qxl->pci->regions[1].base_addr,
                           qxl->pci->regions[1].size,
                           PCI_DEV_MAP_FLAG_WRITABLE,
                           &qxl->vram);
     qxl->vram_physical = u64_to_pointer (qxl->pci->regions[1].base_addr);
     qxl->vram_size = qxl->pci->regions[1].size;
-    
+
     pci_device_map_range (qxl->pci, qxl->pci->regions[2].base_addr,
                           qxl->pci->regions[2].size, 0,
                           (void **)&qxl->rom);
-    
+
     qxl->io = pci_device_open_io(qxl->pci,
                                 qxl->pci->regions[3].base_addr,
                                 qxl->pci->regions[3].size);
@@ -263,17 +263,17 @@ map_memory_helper (qxl_screen_t *qxl)
                               qxl->pci_tag, qxl->pci->memBase[0],
                               (1 << qxl->pci->size[0]));
     qxl->ram_physical = (void *)qxl->pci->memBase[0];
-    
+
     qxl->vram = xf86MapPciMem (scrnIndex, VIDMEM_MMIO | VIDMEM_MMIO_32BIT,
                                qxl->pci_tag, qxl->pci->memBase[1],
                                (1 << qxl->pci->size[1]));
     qxl->vram_physical = (void *)qxl->pci->memBase[1];
     qxl->vram_size = (1 << qxl->pci->size[1]);
-    
+
     qxl->rom = xf86MapPciMem (scrnIndex, VIDMEM_MMIO | VIDMEM_MMIO_32BIT,
                               qxl->pci_tag, qxl->pci->memBase[2],
                               (1 << qxl->pci->size[2]));
-    
+
     qxl->io_base = qxl->pci->ioBase[3];
 #endif
 }
@@ -290,23 +290,23 @@ qxl_unmap_memory (qxl_screen_t *qxl)
 	qxl->worker_running = FALSE;
     }
 #endif
-    
+
     if (qxl->mem)
     {
 	qxl_mem_free_all (qxl->mem);
 	free(qxl->mem);
 	qxl->mem = NULL;
     }
-    
+
     if (qxl->surf_mem) {
 	qxl_mem_free_all (qxl->surf_mem);
 	free(qxl->surf_mem);
 	qxl->surf_mem = NULL;
     }
-    
+
     unmap_memory_helper (qxl);
     qxl->ram = qxl->ram_physical = qxl->vram = qxl->rom = NULL;
-    
+
     qxl->num_modes = 0;
     qxl->modes = NULL;
 }
@@ -317,14 +317,14 @@ qxl_dump_ring_stat (qxl_screen_t *qxl)
 {
     int cmd_prod, cursor_prod, cmd_cons, cursor_cons;
     int release_prod, release_cons;
-    
+
     cmd_prod = qxl_ring_prod (qxl->command_ring);
     cursor_prod = qxl_ring_prod (qxl->cursor_ring);
     cmd_cons = qxl_ring_cons (qxl->command_ring);
     cursor_cons = qxl_ring_cons (qxl->cursor_ring);
     release_prod = qxl_ring_prod (qxl->release_ring);
     release_cons = qxl_ring_cons (qxl->release_ring);
-    
+
     ErrorF ("%s: Cmd %d/%d, Cur %d/%d, Rel %d/%d\n",
             __func__, cmd_cons, cmd_prod, cursor_cons, cursor_prod,
             release_cons, release_prod);
@@ -345,16 +345,16 @@ qxl_resize_surface0 (qxl_screen_t *qxl, long surface0_size)
     long ram_header_size = qxl->ram_size - qxl->rom->ram_header_offset;
     long new_mem_size = qxl->ram_size -
 	(surface0_size + ram_header_size + qxl->monitors_config_size);
-    
+
     if (new_mem_size < 0)
     {
 	ErrorF ("cannot resize surface0 to %ld, does not fit in BAR 0\n",
 	        surface0_size);
 	return 0;
     }
-    
+
     ErrorF ("resizing surface0 to %ld\n", surface0_size);
-    
+
     if (qxl->mem)
     {
 #ifdef QXLDRV_RESIZABLE_SURFACE0
@@ -371,10 +371,10 @@ qxl_resize_surface0 (qxl_screen_t *qxl, long surface0_size)
 	return 0;
 #endif
     }
-    
+
     /* surface0_area is still fixed to start of ram BAR */
     qxl->surface0_size = surface0_size;
-    
+
     qxl->mem_size = new_mem_size;
     qxl->mem = qxl_mem_create ((void *)((unsigned long)qxl->surface0_area + qxl->surface0_size),
                                qxl->mem_size);
@@ -385,22 +385,22 @@ static Bool
 qxl_map_memory (qxl_screen_t *qxl, int scrnIndex)
 {
     map_memory_helper (qxl);
-    
+
     if (!qxl->ram || !qxl->vram || !qxl->rom)
 	return FALSE;
-    
+
     xf86DrvMsg (scrnIndex, X_INFO, "framebuffer at %p (%d KB)\n",
                 qxl->ram, qxl->rom->surface0_area_size / 1024);
-    
+
     xf86DrvMsg (scrnIndex, X_INFO, "command ram at %p (%d KB)\n",
                 (void *)((unsigned long)qxl->ram + qxl->rom->surface0_area_size),
                 (qxl->rom->num_pages * getpagesize ()) / 1024);
-    
+
     xf86DrvMsg (scrnIndex, X_INFO, "vram at %p (%ld KB)\n",
                 qxl->vram, qxl->vram_size / 1024);
-    
+
     xf86DrvMsg (scrnIndex, X_INFO, "rom at %p\n", qxl->rom);
-    
+
     /*
      * Keep a hole for MonitorsConfig. This is not part of QXLRam to ensure
      * the driver can change it without affecting the driver/device ABI.
@@ -417,7 +417,7 @@ qxl_map_memory (qxl_screen_t *qxl, int scrnIndex)
 	return FALSE;
     qxl->surf_mem = qxl_mem_create ((void *)((unsigned long)qxl->vram), qxl->vram_size);
     qxl_allocate_monitors_config (qxl);
-    
+
     return TRUE;
 }
 
@@ -437,7 +437,7 @@ static void
 qxl_save_state (ScrnInfoPtr pScrn)
 {
     qxl_screen_t *qxl = pScrn->driverPrivate;
-    
+
     if (xf86IsPrimaryPci (qxl->pci))
 	vgaHWSaveFonts (pScrn, &qxl->vgaRegs);
 }
@@ -446,7 +446,7 @@ static void
 qxl_restore_state (ScrnInfoPtr pScrn)
 {
     qxl_screen_t *qxl = pScrn->driverPrivate;
-    
+
     if (xf86IsPrimaryPci (qxl->pci))
 	vgaHWRestoreFonts (pScrn, &qxl->vgaRegs);
 }
@@ -459,20 +459,20 @@ qxl_close_screen (CLOSE_SCREEN_ARGS_DECL)
     ScrnInfoPtr pScrn = xf86ScreenToScrn (pScreen);
     qxl_screen_t *qxl = pScrn->driverPrivate;
     Bool result;
-    
+
     ErrorF ("Disabling FB access for %d\n", pScrn->scrnIndex);
     pScrn->EnableDisableFBAccess (pScrn, FALSE);
 
     pScreen->CreateScreenResources = qxl->create_screen_resources;
     pScreen->CloseScreen = qxl->close_screen;
-    
+
     result = pScreen->CloseScreen (CLOSE_SCREEN_ARGS);
-    
+
 #ifndef XSPICE
     if (!xf86IsPrimaryPci (qxl->pci) && qxl->primary)
 	qxl_reset_and_create_mem_slots (qxl);
 #endif
-    
+
     if (pScrn->vtSema)
     {
 	qxl_restore_state (pScrn);
@@ -480,7 +480,7 @@ qxl_close_screen (CLOSE_SCREEN_ARGS_DECL)
 	qxl_unmap_memory (qxl);
     }
     pScrn->vtSema = FALSE;
-    
+
     return result;
 }
 
@@ -490,9 +490,9 @@ qxl_set_screen_pixmap_header (ScreenPtr pScreen)
     ScrnInfoPtr pScrn = xf86ScreenToScrn (pScreen);
     qxl_screen_t *qxl = pScrn->driverPrivate;
     PixmapPtr pPixmap = pScreen->GetScreenPixmap (pScreen);
-    
+
     // TODO: don't ModifyPixmapHeader too early?
-    
+
     if (pPixmap)
     {
 	pScreen->ModifyPixmapHeader (pPixmap,
@@ -534,13 +534,13 @@ qxl_resize_primary_to_virtual (qxl_screen_t *qxl)
     {
 	return TRUE; /* empty Success */
     }
-    
+
     ErrorF ("resizing primary to %dx%d\n", qxl->virtual_x, qxl->virtual_y);
 
     if (!qxl->kms_enabled) {
 	new_surface0_size =
 	    qxl->virtual_x * qxl->pScrn->bitsPerPixel / 8 * qxl->virtual_y;
-    
+
 	if (new_surface0_size > qxl->surface0_size)
 	{
 	    if (!qxl_resize_surface0 (qxl, new_surface0_size))
@@ -550,17 +550,17 @@ qxl_resize_primary_to_virtual (qxl_screen_t *qxl)
 	    }
 	}
     }
-    
+
     if (qxl->primary)
     {
 	qxl_surface_kill (qxl->primary);
 	qxl_surface_cache_sanity_check (qxl->surface_cache);
 	qxl->bo_funcs->destroy_primary(qxl, qxl->primary_bo);
     }
-    
+
     qxl->primary = qxl_create_primary(qxl);
     qxl->bytes_per_pixel = (qxl->pScrn->bitsPerPixel + 7) / 8;
-    
+
     if (qxl->screen_resources_created)
     {
         ScreenPtr pScreen = qxl->pScrn->pScreen;
@@ -572,13 +572,13 @@ qxl_resize_primary_to_virtual (qxl_screen_t *qxl)
 
             if ((surf = get_surface (root)))
                 qxl_surface_kill (surf);
-            
+
             set_surface (root, qxl->primary);
         }
 
         qxl_set_screen_pixmap_header (pScreen);
     }
-    
+
     ErrorF ("primary is %p\n", qxl->primary);
     return TRUE;
 }
@@ -588,7 +588,7 @@ qxl_resize_primary (qxl_screen_t *qxl, uint32_t width, uint32_t height)
 {
     qxl->virtual_x = width;
     qxl->virtual_y = height;
-    
+
     if (qxl->vt_surfaces)
     {
 	ErrorF ("%s: ignoring resize due to not being in control of VT\n",
@@ -603,9 +603,9 @@ qxl_switch_mode (SWITCH_MODE_ARGS_DECL)
 {
     SCRN_INFO_PTR (arg);
     qxl_screen_t *qxl = pScrn->driverPrivate;
-    
+
     ErrorF ("Ignoring display mode, ensuring recreation of primary\n");
-    
+
     return qxl_resize_primary_to_virtual (qxl);
 }
 
@@ -617,14 +617,14 @@ qxl_create_screen_resources (ScreenPtr pScreen)
     Bool           ret;
     PixmapPtr      pPixmap;
     qxl_surface_t *surf;
-    
+
     pScreen->CreateScreenResources = qxl->create_screen_resources;
     ret = pScreen->CreateScreenResources (pScreen);
     pScreen->CreateScreenResources = qxl_create_screen_resources;
-    
+
     if (!ret)
 	return FALSE;
-    
+
     pPixmap = pScreen->GetScreenPixmap (pScreen);
 
     if (qxl->deferred_fps <= 0)
@@ -639,7 +639,7 @@ qxl_create_screen_resources (ScreenPtr pScreen)
 
     qxl_create_desired_modes (qxl);
     qxl_update_edid (qxl);
-    
+
     qxl->screen_resources_created = TRUE;
     return TRUE;
 }
@@ -667,7 +667,7 @@ spiceqxl_screen_init (ScrnInfoPtr pScrn, qxl_screen_t *qxl)
     else
     {
         /* Crashes result from invalid xorg_timer pointers in
-           our watch lists because Xorg clears all timers at server reset. 
+           our watch lists because Xorg clears all timers at server reset.
            We would require a fairly substantial revamp of how the
            spice server is started and operated to avoid this crash.  */
         ErrorF("WARNING: XSPICE requires -noreset; crashes are now likely.\n");
@@ -687,13 +687,13 @@ Bool
 qxl_fb_init (qxl_screen_t *qxl, ScreenPtr pScreen)
 {
     ScrnInfoPtr pScrn = qxl->pScrn;
-   
+
     if (!fbScreenInit (pScreen, qxl_surface_get_host_bits(qxl->primary),
                        pScrn->virtualX, pScrn->virtualY,
                        pScrn->xDpi, pScrn->yDpi, pScrn->virtualX,
                        pScrn->bitsPerPixel))
 	return FALSE;
-    
+
     fbPictureInit (pScreen, NULL, 0);
     return TRUE;
 }
@@ -705,32 +705,32 @@ qxl_screen_init (SCREEN_INIT_ARGS_DECL)
     qxl_screen_t * qxl = pScrn->driverPrivate;
     struct QXLRam *ram_header;
     VisualPtr      visual;
-    
+
     CHECK_POINT ();
-    
+
     assert (qxl->pScrn == pScrn);
-    
+
     if (!qxl_map_memory (qxl, pScrn->scrnIndex))
 	return FALSE;
-    
+
 #ifdef XSPICE
     spiceqxl_screen_init (pScrn, qxl);
 #endif
     ram_header = (void *)((unsigned long)qxl->ram + (unsigned long)qxl->rom->ram_header_offset);
-    
+
     printf ("ram_header at %d\n", qxl->rom->ram_header_offset);
     printf ("surf0 size: %d\n", qxl->rom->surface0_area_size);
-    
+
     qxl_save_state (pScrn);
     qxl_blank_screen (pScreen, SCREEN_SAVER_ON);
-    
+
     miClearVisualTypes ();
     if (!miSetVisualTypes (pScrn->depth, miGetDefaultVisualMask (pScrn->depth),
                            pScrn->rgbBits, pScrn->defaultVisual))
 	goto out;
     if (!miSetPixmapDepths ())
 	goto out;
-    
+
 #if 0
     ErrorF ("allocated %d x %d  %p\n", pScrn->virtualX, pScrn->virtualY, qxl->fb);
 #endif
@@ -741,10 +741,10 @@ qxl_screen_init (SCREEN_INIT_ARGS_DECL)
 
     qxl->surface_cache = qxl_surface_cache_create (qxl);
     qxl->primary = qxl_create_primary(qxl);
-    
+
     if (!qxl_fb_init (qxl, pScreen))
 	goto out;
-    
+
     visual = pScreen->visuals + pScreen->numVisuals;
     while (--visual >= pScreen->visuals)
     {
@@ -758,7 +758,7 @@ qxl_screen_init (SCREEN_INIT_ARGS_DECL)
 	    visual->blueMask = pScrn->mask.blue;
 	}
     }
-    
+
     qxl->command_ring = qxl_ring_create ((struct qxl_ring_header *)&(ram_header->cmd_ring),
                                          sizeof (struct QXLCommand),
                                          QXL_COMMAND_RING_SIZE, QXL_IO_NOTIFY_CMD, qxl);
@@ -768,17 +768,17 @@ qxl_screen_init (SCREEN_INIT_ARGS_DECL)
     qxl->release_ring = qxl_ring_create ((struct qxl_ring_header *)&(ram_header->release_ring),
                                          sizeof (uint64_t),
                                          QXL_RELEASE_RING_SIZE, 0, qxl);
-    
+
     /* xf86DPMSInit (pScreen, xf86DPMSSet, 0); */
-    
+
     pScreen->SaveScreen = qxl_blank_screen;
-    
+
     qxl_uxa_init (qxl, pScreen);
 
     uxa_set_fallback_debug (pScreen, qxl->debug_render_fallbacks);
-    
+
     DamageSetup (pScreen);
-    
+
     /* We need to set totalPixmapSize after setup_uxa and Damage,
        as the privates size is not computed correctly until then
      */
@@ -791,23 +791,23 @@ qxl_screen_init (SCREEN_INIT_ARGS_DECL)
 
     qxl->create_screen_resources = pScreen->CreateScreenResources;
     pScreen->CreateScreenResources = qxl_create_screen_resources;
-    
+
     qxl->close_screen = pScreen->CloseScreen;
     pScreen->CloseScreen = qxl_close_screen;
-    
+
     qxl_cursor_init (pScreen);
-    
+
     CHECK_POINT ();
-    
+
     pScreen->width = qxl->primary_mode.x_res;
     pScreen->height = qxl->primary_mode.y_res;
-    
+
     if (!xf86CrtcScreenInit (pScreen))
 	return FALSE;
-    
+
     if (!qxl_resize_primary_to_virtual (qxl))
 	return FALSE;
-    
+
     /* Note: this must be done after DamageSetup() because it calls
      * _dixInitPrivates. And if that has been called, DamageSetup()
      * will assert.
@@ -815,17 +815,17 @@ qxl_screen_init (SCREEN_INIT_ARGS_DECL)
     if (!uxa_resources_init (pScreen))
 	return FALSE;
     CHECK_POINT ();
-    
+
     /* fake transform support, to allow agent to switch crtc mode */
     /* without X doing checks, see rrcrtc.c "Check screen size */
     /* bounds" */
     xf86RandR12SetTransformSupport (pScreen, TRUE);
-    
+
     if (qxl->deferred_fps)
         dfps_start_ticker(qxl);
 
     return TRUE;
-    
+
 out:
     return FALSE;
 }
@@ -835,33 +835,33 @@ qxl_enter_vt (VT_FUNC_ARGS_DECL)
 {
     SCRN_INFO_PTR (arg);
     qxl_screen_t *qxl = pScrn->driverPrivate;
-    
+
     qxl_save_state (pScrn);
-    
+
     qxl_reset_and_create_mem_slots (qxl);
-    
+
     if (!qxl_resize_primary_to_virtual (qxl))
 	return FALSE;
-    
+
     if (qxl->mem)
     {
 	qxl_mem_free_all (qxl->mem);
     }
-    
+
     if (qxl->surf_mem)
 	qxl_mem_free_all (qxl->surf_mem);
-    
+
     if (qxl->vt_surfaces)
     {
 	qxl_surface_cache_replace_all (qxl->surface_cache, qxl->vt_surfaces);
-	
+
 	qxl->vt_surfaces = NULL;
     }
-    
+
     qxl_create_desired_modes (qxl);
-    
+
     pScrn->EnableDisableFBAccess (XF86_SCRN_ARG (pScrn), TRUE);
-    
+
     return TRUE;
 }
 
@@ -870,7 +870,7 @@ qxl_leave_vt (VT_FUNC_ARGS_DECL)
 {
     SCRN_INFO_PTR (arg);
     qxl_screen_t *qxl = pScrn->driverPrivate;
-    
+
     xf86_hide_cursors (pScrn);
 
     pScrn->EnableDisableFBAccess (XF86_SCRN_ARG (pScrn), FALSE);
@@ -879,7 +879,7 @@ qxl_leave_vt (VT_FUNC_ARGS_DECL)
         qxl->vt_surfaces = qxl_surface_cache_evacuate_all (qxl->surface_cache);
 
     ioport_write (qxl, QXL_IO_RESET, 0);
-    
+
     qxl_restore_state (pScrn);
     qxl->device_primary = QXL_DEVICE_PRIMARY_NONE;
 }
@@ -890,10 +890,10 @@ qxl_color_setup (ScrnInfoPtr pScrn)
     int   scrnIndex = pScrn->scrnIndex;
     Gamma gzeros = { 0.0, 0.0, 0.0 };
     rgb   rzeros = { 0, 0, 0 };
-    
+
     if (!xf86SetDepthBpp (pScrn, 0, 0, 0, Support32bppFb))
 	return FALSE;
-    
+
     if (pScrn->depth != 15 && pScrn->depth != 24)
     {
 	xf86DrvMsg (scrnIndex, X_ERROR, "Depth %d is not supported\n",
@@ -901,16 +901,16 @@ qxl_color_setup (ScrnInfoPtr pScrn)
 	return FALSE;
     }
     xf86PrintDepthBpp (pScrn);
-    
+
     if (!xf86SetWeight (pScrn, rzeros, rzeros))
 	return FALSE;
-    
+
     if (!xf86SetDefaultVisual (pScrn, -1))
 	return FALSE;
-    
+
     if (!xf86SetGamma (pScrn, gzeros))
 	return FALSE;
-    
+
     return TRUE;
 }
 
@@ -918,11 +918,11 @@ static void
 print_modes (qxl_screen_t *qxl, int scrnIndex)
 {
     int i;
-    
+
     for (i = 0; i < qxl->num_modes; ++i)
     {
 	struct QXLMode *m = qxl->modes + i;
-	
+
 	xf86DrvMsg (scrnIndex, X_INFO,
 	            "%d: %dx%d, %d bits, stride %d, %dmm x %dmm, orientation %d\n",
 	            m->id, m->x_res, m->y_res, m->bits, m->stride, m->x_mili,
@@ -937,27 +937,27 @@ qxl_check_device (ScrnInfoPtr pScrn, qxl_screen_t *qxl)
     int            scrnIndex = pScrn->scrnIndex;
     struct QXLRom *rom = qxl->rom;
     struct QXLRam *ram_header = (void *)((unsigned long)qxl->ram + rom->ram_header_offset);
-    
+
     CHECK_POINT ();
-    
+
     if (rom->magic != 0x4f525851)   /* "QXRO" little-endian */
     {
 	xf86DrvMsg (scrnIndex, X_ERROR, "Bad ROM signature %x\n", rom->magic);
 	return FALSE;
     }
-    
+
     xf86DrvMsg (scrnIndex, X_INFO, "Device version %d.%d\n",
                 rom->id, rom->update_id);
-    
+
     xf86DrvMsg (scrnIndex, X_INFO, "Compression level %d, log level %d\n",
                 rom->compression_level,
                 rom->log_level);
-    
+
     xf86DrvMsg (scrnIndex, X_INFO, "%d io pages at 0x%lx\n",
                 rom->num_pages, (unsigned long)qxl->ram);
-    
+
     xf86DrvMsg (scrnIndex, X_INFO, "RAM header offset: 0x%x\n", rom->ram_header_offset);
-    
+
     if (ram_header->magic != 0x41525851)   /* "QXRA" little-endian */
     {
 	xf86DrvMsg (scrnIndex, X_ERROR, "Bad RAM signature %x at %p\n",
@@ -965,7 +965,7 @@ qxl_check_device (ScrnInfoPtr pScrn, qxl_screen_t *qxl)
 	            &ram_header->magic);
 	return FALSE;
     }
-    
+
     xf86DrvMsg (scrnIndex, X_INFO, "Correct RAM signature %x\n",
                 ram_header->magic);
     return TRUE;
@@ -1039,21 +1039,21 @@ qxl_pre_init (ScrnInfoPtr pScrn, int flags)
      */
     if (!pScrn->confScreen)
 	return FALSE;
-    
+
     CHECK_POINT ();
-    
+
     qxl_mem_init();
-    
+
     /* zaphod mode is for suckers and i choose not to implement it */
     if (xf86IsEntityShared (pScrn->entityList[0]))
     {
 	xf86DrvMsg (scrnIndex, X_ERROR, "No Zaphod mode for you\n");
 	return FALSE;
     }
-    
+
     if (!pScrn->driverPrivate)
 	pScrn->driverPrivate = XNFcallocarray(sizeof (qxl_screen_t), 1);
-    
+
     qxl = pScrn->driverPrivate;
     qxl->device_primary = QXL_DEVICE_PRIMARY_UNDEFINED;
     qxl->pScrn = pScrn;
@@ -1104,7 +1104,7 @@ qxl_pre_init (ScrnInfoPtr pScrn, int flags)
 
     if (!qxl_map_memory (qxl, scrnIndex))
 	goto out;
-    
+
 #ifndef XSPICE
     if (!qxl_check_device (pScrn, qxl))
 	goto out;
@@ -1120,9 +1120,9 @@ qxl_pre_init (ScrnInfoPtr pScrn, int flags)
                       - BYTES_TO_KB(qxl->monitors_config_size);
     xf86DrvMsg (scrnIndex, X_INFO, "%d KB of video RAM\n", pScrn->videoRam);
     xf86DrvMsg (scrnIndex, X_INFO, "%d surfaces\n", qxl->rom->n_surfaces);
-    
+
     /* ddc stuff here */
-    
+
     clockRanges = XNFcallocarray(sizeof (ClockRange), 1);
     clockRanges->next = NULL;
     clockRanges->minClock = 10000;
@@ -1131,7 +1131,7 @@ qxl_pre_init (ScrnInfoPtr pScrn, int flags)
     clockRanges->interlaceAllowed = clockRanges->doubleScanAllowed = 0;
     clockRanges->ClockMulFactor = clockRanges->ClockDivFactor = 1;
     pScrn->progClock = TRUE;
-    
+
     /* override QXL monitor stuff */
     if (pScrn->monitor->nHsync <= 0)
     {
@@ -1147,15 +1147,15 @@ qxl_pre_init (ScrnInfoPtr pScrn, int flags)
     }
 
     qxl_initialize_x_modes (qxl, pScrn, &max_x, &max_y);
-    
+
     CHECK_POINT ();
-    
+
     xf86PruneDriverModes (pScrn);
-    
+
     qxl_init_randr (pScrn, qxl);
 
     xf86SetDpi (pScrn, 0, 0);
-    
+
     if (!xf86LoadSubModule (pScrn, "fb")
 #ifndef XSPICE
         || !xf86LoadSubModule (pScrn, "ramdac")
@@ -1165,33 +1165,33 @@ qxl_pre_init (ScrnInfoPtr pScrn, int flags)
     {
 	goto out;
     }
-    
+
     print_modes (qxl, scrnIndex);
-    
+
 #ifndef XSPICE
     /* VGA hardware initialisation */
     if (!vgaHWGetHWRec (pScrn))
 	return FALSE;
     vgaHWSetStdFuncs (VGAHWPTR (pScrn));
 #endif
-    
+
     /* hate */
     qxl_unmap_memory (qxl);
-    
+
     CHECK_POINT ();
-    
+
     xf86DrvMsg (scrnIndex, X_INFO, "PreInit complete\n");
 #ifdef GIT_VERSION
     xf86DrvMsg (scrnIndex, X_INFO, "git commit %s\n", GIT_VERSION);
 #endif
     return TRUE;
-    
+
 out:
     if (clockRanges)
 	free (clockRanges);
     if (qxl)
 	free (qxl);
-    
+
     return FALSE;
 }
 
@@ -1211,7 +1211,7 @@ static const struct pci_id_match qxl_device_match[] = {
 	PCI_VENDOR_RED_HAT, PCI_CHIP_QXL_01FF, PCI_MATCH_ANY, PCI_MATCH_ANY,
 	0x00000000, 0x00000000, CHIP_QXL_1
     },
-    
+
     { 0 },
 };
 #endif
@@ -1304,20 +1304,20 @@ qxl_probe (struct _DriverRec *drv, int flags)
     int           entityIndex;
     EntityInfoPtr pEnt;
     GDevPtr*      device;
-    
+
     if (flags & PROBE_DETECT)
 	return TRUE;
-    
+
     pScrn = xf86AllocateScreen (drv, flags);
     qxl_init_scrn (pScrn, FALSE);
-    
+
     xf86MatchDevice (driver_name, &device);
     entityIndex = xf86ClaimNoSlot (drv, 0, device[0], TRUE);
     pEnt = xf86GetEntityInfo (entityIndex);
     pEnt->driver = drv;
-    
+
     xf86AddEntityToScreen (pScrn, entityIndex);
-    
+
     return TRUE;
 }
 
@@ -1330,32 +1330,32 @@ qxl_probe (DriverPtr drv, int flags)
     int      numDevSections;
     int *    usedChips;
     GDevPtr *devSections;
-    
+
     if ((numDevSections = xf86MatchDevice (QXL_NAME, &devSections)) <= 0)
 	return FALSE;
-    
+
     if (!xf86GetPciVideoInfo ())
 	return FALSE;
-    
+
     numUsed = xf86MatchPciInstances (QXL_NAME, PCI_VENDOR_RED_HAT,
                                      qxlChips, qxlPciChips,
                                      devSections, numDevSections,
                                      drv, &usedChips);
-    
+
     xfree (devSections);
-    
+
     if (numUsed < 0)
     {
 	xfree (usedChips);
 	return FALSE;
     }
-    
+
     if (flags & PROBE_DETECT)
     {
 	xfree (usedChips);
 	return TRUE;
     }
-    
+
     for (i = 0; i < numUsed; i++)
     {
 	ScrnInfoPtr pScrn = NULL;
@@ -1363,7 +1363,7 @@ qxl_probe (DriverPtr drv, int flags)
 	                                  0, 0, 0, 0, 0)))
 	    qxl_init_scrn (pScrn, FALSE);
     }
-    
+
     xfree (usedChips);
     return TRUE;
 }
@@ -1377,12 +1377,12 @@ qxl_pci_probe (DriverPtr drv, int entity, struct pci_device *dev, intptr_t match
     ScrnInfoPtr   pScrn = xf86ConfigPciEntity (NULL, 0, entity, NULL, NULL,
                                                NULL, NULL, NULL, NULL);
     Bool kms = FALSE;
-    
+
     if (!pScrn)
 	return FALSE;
 
     if (dev) {
-	if (qxl_kernel_mode_enabled(pScrn, dev)) {    
+	if (qxl_kernel_mode_enabled(pScrn, dev)) {
 	    kms = TRUE;
 	}
     }
@@ -1391,9 +1391,9 @@ qxl_pci_probe (DriverPtr drv, int entity, struct pci_device *dev, intptr_t match
 	pScrn->driverPrivate = XNFcallocarray(sizeof (qxl_screen_t), 1);
     qxl = pScrn->driverPrivate;
     qxl->pci = dev;
-    
+
     qxl_init_scrn (pScrn, kms);
-    
+
     return TRUE;
 }
 
@@ -1491,7 +1491,7 @@ static pointer
 qxl_setup (pointer module, pointer opts, int *errmaj, int *errmin)
 {
     static Bool loaded = FALSE;
-    
+
     if (!loaded)
     {
 	loaded = TRUE;
@@ -1505,7 +1505,7 @@ qxl_setup (pointer module, pointer opts, int *errmaj, int *errmin)
     {
 	if (errmaj)
 	    *errmaj = LDR_ONCEONLY;
-	
+
 	return NULL;
     }
 }

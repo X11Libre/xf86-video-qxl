@@ -150,7 +150,7 @@ xspice/scripts/Xspice --port 5900 --disable-ticketing --xorg $XORG :3.0 [--vdage
 (and many more options available -- see scripts/Xspice)
 
 Run X clients as usual by setting DISPLAY=:3.0, for example
-# DISPLAY=:3.0 firefox &  or 
+# DISPLAY=:3.0 firefox &  or
 # DISPLAY=:3.0 twm &  DISPLAY=:3.0 xterm &
 
 Run spice client:

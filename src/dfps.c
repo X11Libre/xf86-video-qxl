@@ -396,7 +396,7 @@ void dfps_set_uxa_functions(qxl_screen_t *qxl, ScreenPtr screen)
     qxl->uxa->prepare_composite = (typeof(qxl->uxa->prepare_composite))unaccel;
     qxl->uxa->composite = (typeof(qxl->uxa->composite))unaccel;
     qxl->uxa->done_composite = (typeof(qxl->uxa->done_composite))unaccel;
-    
+
     /* PutImage */
     qxl->uxa->put_image = dfps_put_image;
 

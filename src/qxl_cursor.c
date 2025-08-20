@@ -44,7 +44,7 @@ qxl_alloc_cursor_cmd(qxl_screen_t *qxl)
     struct QXLCursorCmd *cmd = qxl->bo_funcs->bo_map(bo);
 
     cmd->release_info.id = pointer_to_u64 (bo) | 1;
-    
+
     qxl->bo_funcs->bo_unmap(bo);
     return bo;
 }
@@ -58,11 +58,11 @@ qxl_set_cursor_position(ScrnInfoPtr pScrn, int x, int y)
 
     qxl->cur_x = x;
     qxl->cur_y = y;
-    
+
     cmd->type = QXL_CURSOR_MOVE;
     cmd->u.position.x = qxl->cur_x + qxl->hot_x;
     cmd->u.position.y = qxl->cur_y + qxl->hot_y;
-    
+
     qxl->bo_funcs->bo_unmap(cmd_bo);
     push_cursor(qxl, cmd_bo);
 }
@@ -103,7 +103,7 @@ qxl_load_cursor_argb (ScrnInfoPtr pScrn, CursorPtr pCurs)
     cursor->header.hot_spot_y = pCurs->bits->yhot;
 
     cursor->data_size = size;
-    
+
     cursor->chunk.next_chunk = 0;
     cursor->chunk.prev_chunk = 0;
     cursor->chunk.data_size = size;
@@ -127,7 +127,7 @@ qxl_load_cursor_argb (ScrnInfoPtr pScrn, CursorPtr pCurs)
 
     qxl->hot_x = pCurs->bits->xhot;
     qxl->hot_y = pCurs->bits->yhot;
-    
+
     cmd = qxl->bo_funcs->bo_map(cmd_bo);
     cmd->type = QXL_CURSOR_SET;
     cmd->u.set.position.x = qxl->cur_x + qxl->hot_x;
@@ -139,7 +139,7 @@ qxl_load_cursor_argb (ScrnInfoPtr pScrn, CursorPtr pCurs)
 
     push_cursor(qxl, cmd_bo);
     qxl->bo_funcs->bo_decref(qxl, cursor_bo);
-}    
+}
 
 static Bool
 qxl_use_hw_cursor (ScreenPtr pScrn, CursorPtr pCurs)
@@ -177,7 +177,7 @@ qxl_show_cursor(ScrnInfoPtr pScrn)
      * QXL_CURSOR_SET?
      */
     qxl_screen_t *qxl = pScrn->driverPrivate;
-    
+
     qxl_set_cursor_position(pScrn, qxl->cur_x, qxl->cur_y);
 }
 

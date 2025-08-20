@@ -509,7 +509,7 @@ uxa_copy_n_to_n(DrawablePtr pSrcDrawable,
 	PixmapPtr pSrcPixmap, pDstPixmap;
 	RegionRec src_region;
 	RegionRec dst_region;
-	
+
 	pSrcPixmap = uxa_get_drawable_pixmap(pSrcDrawable);
 	pDstPixmap = uxa_get_drawable_pixmap(pDstDrawable);
 	if (!pSrcPixmap || !pDstPixmap)
@@ -1236,7 +1236,7 @@ uxa_fill_region_tiled(DrawablePtr pDrawable,
 					while (dstX < pBox[i].x2) {
 						(*uxa_screen->info->copy) (pPixmap,
 									   pBox[i].x1, pBox[i].y1,
-									   dstX, pBox[i].y1, 
+									   dstX, pBox[i].y1,
 									   width, height);
 						dstX += width;
 						width = min(pBox[i].x2 - dstX, width * 2);
@@ -1248,7 +1248,7 @@ uxa_fill_region_tiled(DrawablePtr pDrawable,
 					while (dstY < pBox[i].y2) {
 						(*uxa_screen->info->copy) (pPixmap,
 									   pBox[i].x1, pBox[i].y1,
-									   pBox[i].x1, dstY, 
+									   pBox[i].x1, dstY,
 									   width, height);
 						dstY += height;
 						height = min(pBox[i].y2 - dstY, height * 2);
@@ -1324,13 +1324,13 @@ fallback:
 		      uxa_drawable_location(pDrawable)));
 
 	REGION_INIT(screen, &region, &Box, 1);
-	
+
 	if (uxa_prepare_access(pDrawable, &region, UXA_ACCESS_RO)) {
 		fbGetImage(pDrawable, x, y, w, h, format, planeMask, d);
 		uxa_finish_access(pDrawable);
 	}
 
 	REGION_UNINIT(screen, &region);
-	
+
 	return;
 }

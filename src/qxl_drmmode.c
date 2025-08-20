@@ -305,7 +305,7 @@ drmmode_hide_cursor (xf86CrtcPtr crtc)
 {
 	drmmode_crtc_private_ptr drmmode_crtc = crtc->driver_private;
 	drmmode_ptr drmmode = drmmode_crtc->drmmode;
-	
+
 	drmModeSetCursor(drmmode->fd, drmmode_crtc->mode_crtc->crtc_id, 0, 64, 64);
 }
 
@@ -360,7 +360,7 @@ drmmode_crtc_init(ScrnInfoPtr pScrn, drmmode_ptr drmmode, int num)
 
 		drmmode_crtc->cursor_ptr = qxl->bo_funcs->bo_map(drmmode_crtc->cursor_bo);
 	}
-	
+
 	return;
 }
 
@@ -503,7 +503,7 @@ drmmode_output_create_resources(xf86OutputPtr output)
     drmmode_output->props = calloc(mode_output->count_props, sizeof(drmmode_prop_rec));
     if (!drmmode_output->props)
 	return;
-    
+
     drmmode_output->num_props = 0;
     for (i = 0, j = 0; i < mode_output->count_props; i++) {
 	drmmode_prop = drmModeGetProperty(drmmode->fd, mode_output->props[i]);
@@ -759,7 +759,7 @@ drmmode_output_init(ScrnInfoPtr pScrn, drmmode_ptr drmmode, int num)
 	}
 
 	snprintf(name, 32, "%s-%d", output_names[koutput->connector_type], koutput->connector_type_id);
-	
+
 
 	output = xf86OutputCreate (pScrn, &drmmode_output_funcs, name);
 	if (!output) {
@@ -783,7 +783,7 @@ drmmode_output_init(ScrnInfoPtr pScrn, drmmode_ptr drmmode, int num)
 	output->interlaceAllowed = TRUE;
 	output->doubleScanAllowed = TRUE;
 	output->driver_private = drmmode_output;
-	
+
 	output->possible_crtcs = 0xffffffff;
 	for (i = 0; i < koutput->count_encoders; i++) {
 		output->possible_crtcs &= kencoders[i]->possible_crtcs;
@@ -811,7 +811,7 @@ out_free_encoders:
 		free(kencoders);
 	}
 	drmModeFreeConnector(koutput);
-	
+
 }
 
 static Bool
@@ -888,7 +888,7 @@ drmmode_xf86crtc_resize (ScrnInfoPtr scrn, int width, int height)
 								    height,
 								    NULL, pitch);
 	}
-		
+
 	/* fixup the surfaces */
 
 	if (old_fb_id)

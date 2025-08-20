@@ -3,7 +3,7 @@
 
   - XAA and the shadow buffer will not work together, because the
     shadow buffer updates in the block handler, so if we got any XAA
-    calls in between, things would get messed up. 
+    calls in between, things would get messed up.
 
     Current plan:
 	- Add our own damage tracker that produces raw rectangles
@@ -16,7 +16,7 @@
 
 	  If we decide to accelerate a particular operation, first set
           a flag that the immediately following damage event should not
-	  result in spice protocol being sent. Ie., 
+	  result in spice protocol being sent. Ie.,
 
 	  on_op:
 		qxl->enable_copying = FALSE
@@ -32,7 +32,7 @@
 		- in a block handler
 		- before accelerating
 
-	  Ie., 
+	  Ie.,
 
 	  on_op:
 		clear damage
@@ -57,7 +57,7 @@
 	- First a damage notification: "I am going to draw here"
 	- Then maybe an exa notification
 
-	So the algorithm is. 
+	So the algorithm is.
 
 	Maintain a "to_copy" region to be copied into the device
 
@@ -94,8 +94,8 @@
 
 	- If/when we add hardware acceleration to pixman, pixman will need to
 	  generate QXL protocol. This could be tricky because DRM assumes that
-	  everything is a pixmap, but qxl explicitly has a framebuffer. Same 
-	  goes for cairo-drm. 
+	  everything is a pixmap, but qxl explicitly has a framebuffer. Same
+	  goes for cairo-drm.
 
 - Hashing
 
@@ -158,7 +158,7 @@
 Better acceleration:
 
 - Given offscreen pixmaps, we should get rid of the shadow framebuffer.
-  If we have to fall back to software, we can use the drawing area to 
+  If we have to fall back to software, we can use the drawing area to
   get the area in question, then copy them to qxl_malloced memory,
   then draw there, then finally send the bits.
 
@@ -173,7 +173,7 @@ Question:
 - Note: when we set a mode, all allocated memory should be considered
   released.
 
-- What is the "vram" PCI range used for? 
+- What is the "vram" PCI range used for?
 
   As I read the Windows driver, it can be mapped with the ioctl
   VIDEO_MAP_VIDEO_MEMORY. In driver.c it is mapped as pdev->fb, but
