@@ -178,12 +178,6 @@ typedef struct {
 	INT16 height;
 } uxa_composite_rect_t;
 
-/**
- * exaDDXDriverInit must be implemented by the DDX using EXA, and is the place
- * to set EXA options or hook in screen functions to handle using EXA as the AA.
-  */
-void exaDDXDriverInit(ScreenPtr pScreen);
-
 Bool uxa_prepare_access_window(WindowPtr pWin);
 
 void uxa_finish_access_window(WindowPtr pWin);
