@@ -81,8 +81,9 @@ static Bool qxl_open_drm_master(ScrnInfoPtr pScrn)
     }
 #endif
 
-    XNFasprintf(&busid, "pci:%04x:%02x:%02x.%d",
-                dev->domain, dev->bus, dev->dev, dev->func);
+    if (asprintf(&busid, "pci:%04x:%02x:%02x.%d",
+                dev->domain, dev->bus, dev->dev, dev->func) == -1)
+        return FALSE;
 
     qxl->drm_fd = drmOpen("qxl", busid);
     if (qxl->drm_fd == -1) {
