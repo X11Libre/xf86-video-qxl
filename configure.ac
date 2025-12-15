@@ -22,10 +22,10 @@
 
 # Initialize Autoconf
 AC_PREREQ([2.60])
-AC_INIT([xf86-video-qxl],
+AC_INIT([xlibre-xf86-video-qxl],
         [0.1.6],
-        [https://gitlab.freedesktop.org/xorg/driver/xf86-video-qxl/issues],
-        [xf86-video-qxl])
+        [https://github.com/X11Libre/xf86-video-qxl/issues],
+        [xlibre-xf86-video-qxl])
 AC_CONFIG_SRCDIR([Makefile.am])
 AC_CANONICAL_HOST
 
