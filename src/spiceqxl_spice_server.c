@@ -25,9 +25,7 @@
  *
  * spice server helpers for spiceqxl.
  */
-#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
 
 #include "qxl.h"
 #include "qxl_option_helpers.h"

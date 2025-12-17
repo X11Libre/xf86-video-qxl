@@ -21,10 +21,8 @@
  */
 
 /* code to handle UMS modesetting */
-
-#ifdef HAVE_CONFIG_H
 #include <config.h>
-#endif
+
 #include "qxl.h"
 
 /* These constants govern which modes are reported to X as preferred */

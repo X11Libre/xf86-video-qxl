@@ -21,9 +21,7 @@
  */
 
 /* all the IO routines for QXL userspace code */
-#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
 
 #include <unistd.h>
 #include <errno.h>

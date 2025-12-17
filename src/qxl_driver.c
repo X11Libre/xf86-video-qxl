@@ -27,10 +27,7 @@
  * This is qxl, a driver for the Qumranet paravirtualized graphics device
  * in qemu.
  */
-
-#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
 
 #include <unistd.h>
 #include <string.h>

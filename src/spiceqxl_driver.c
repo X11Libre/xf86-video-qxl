@@ -26,9 +26,7 @@
  * most of the code is still in qxl_driver.c, but for clarity parts are moved
  * here, and only used / compiled if XSPICE is defined
  */
-#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
 
 #include "qxl.h"
 #include "spiceqxl_driver.h"

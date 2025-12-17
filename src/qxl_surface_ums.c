@@ -43,9 +43,7 @@
  * which puts the surface into the 'free' state.
  *
  */
-#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
 
 #include "qxl.h"
 #include "qxl_surface.h"

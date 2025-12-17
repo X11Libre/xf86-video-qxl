@@ -23,9 +23,7 @@
 /* Handle inputs channel for spice, and register the X parts,
  * a mouse and a keyboard device pair.
  */
-#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
 
 #include <xf86Xinput.h>
 #include <exevents.h>

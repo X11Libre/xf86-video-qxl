@@ -27,9 +27,6 @@
  *
  */
 
-#ifdef HAVE_DIX_CONFIG_H
-#include <dix-config.h>
-#endif
 #include "uxa-priv.h"
 #include "uxa.h"
 #include "mipict.h"

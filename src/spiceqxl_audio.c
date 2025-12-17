@@ -22,11 +22,7 @@
 
 /* XSpice based audio feed; reads from files (presumably fifos) in a configured directory,
    and mixes their raw data on to the spice playback channel.  */
-
-
-#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
 
 #include "spiceqxl_audio.h"
 
