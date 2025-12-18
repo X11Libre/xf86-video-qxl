@@ -210,7 +210,6 @@ map_memory_helper (qxl_screen_t *qxl)
 static void
 unmap_memory_helper (qxl_screen_t *qxl)
 {
-#ifdef XSERVER_LIBPCIACCESS
     if (qxl->ram)
 	pci_device_unmap_range (qxl->pci, qxl->ram, qxl->pci->regions[0].size);
     if (qxl->vram)
@@ -219,20 +218,11 @@ unmap_memory_helper (qxl_screen_t *qxl)
 	pci_device_unmap_range (qxl->pci, qxl->rom, qxl->pci->regions[2].size);
     if (qxl->io)
 	pci_device_close_io (qxl->pci, qxl->io);
-#else
-    if (qxl->ram)
-	xf86UnMapVidMem (scrnIndex, qxl->ram, (1 << qxl->pci->size[0]));
-    if (qxl->vram)
-	xf86UnMapVidMem (scrnIndex, qxl->vram, (1 << qxl->pci->size[1]));
-    if (qxl->rom)
-	xf86UnMapVidMem (scrnIndex, qxl->rom, (1 << qxl->pci->size[2]));
-#endif
 }
 
 static void
 map_memory_helper (qxl_screen_t *qxl)
 {
-#ifdef XSERVER_LIBPCIACCESS
     pci_device_map_range (qxl->pci, qxl->pci->regions[0].base_addr,
                           qxl->pci->regions[0].size,
                           PCI_DEV_MAP_FLAG_WRITABLE | PCI_DEV_MAP_FLAG_WRITE_COMBINE,
@@ -255,24 +245,6 @@ map_memory_helper (qxl_screen_t *qxl)
                                 qxl->pci->regions[3].base_addr,
                                 qxl->pci->regions[3].size);
     qxl->io_base = qxl->pci->regions[3].base_addr;
-#else
-    qxl->ram = xf86MapPciMem (scrnIndex, VIDMEM_FRAMEBUFFER,
-                              qxl->pci_tag, qxl->pci->memBase[0],
-                              (1 << qxl->pci->size[0]));
-    qxl->ram_physical = (void *)qxl->pci->memBase[0];
-
-    qxl->vram = xf86MapPciMem (scrnIndex, VIDMEM_MMIO | VIDMEM_MMIO_32BIT,
-                               qxl->pci_tag, qxl->pci->memBase[1],
-                               (1 << qxl->pci->size[1]));
-    qxl->vram_physical = (void *)qxl->pci->memBase[1];
-    qxl->vram_size = (1 << qxl->pci->size[1]);
-
-    qxl->rom = xf86MapPciMem (scrnIndex, VIDMEM_MMIO | VIDMEM_MMIO_32BIT,
-                              qxl->pci_tag, qxl->pci->memBase[2],
-                              (1 << qxl->pci->size[2]));
-
-    qxl->io_base = qxl->pci->ioBase[3];
-#endif
 }
 
 #endif /* XSPICE */
@@ -1061,9 +1033,6 @@ qxl_pre_init (ScrnInfoPtr pScrn, int flags)
 
 #ifndef XSPICE
     qxl->pci = xf86GetPciInfoForEntity (qxl->entity->index);
-#ifndef XSERVER_LIBPCIACCESS
-    qxl->pci_tag = pciTag (qxl->pci->bus, qxl->pci->device, qxl->pci->func);
-#endif
     if (qxl->pci->revision < 4)
     {
 	ErrorF ("Ignoring monitor config, device revision < 4\n");
@@ -1193,7 +1162,6 @@ out:
 }
 
 #ifndef XSPICE
-#ifdef XSERVER_LIBPCIACCESS
 enum qxl_class
 {
     CHIP_QXL_1,
@@ -1211,19 +1179,12 @@ static const struct pci_id_match qxl_device_match[] = {
 
     { 0 },
 };
-#endif
 
 static SymTabRec qxlChips[] = {
     { PCI_CHIP_QXL_0100, "QXL 1", },
     { -1, NULL }
 };
 
-#ifndef XSERVER_LIBPCIACCESS
-static PciChipsets qxlPciChips[] = {
-    { PCI_CHIP_QXL_0100, PCI_CHIP_QXL_0100, RES_SHARED_VGA },
-    { -1, -1, RES_UNDEFINED }
-};
-#endif
 #endif /* !XSPICE */
 
 static void
@@ -1319,53 +1280,6 @@ qxl_probe (struct _DriverRec *drv, int flags)
 }
 
 #else /* normal, not XSPICE */
-#ifndef XSERVER_LIBPCIACCESS
-static Bool
-qxl_probe (DriverPtr drv, int flags)
-{
-    int      i, numUsed;
-    int      numDevSections;
-    int *    usedChips;
-    GDevPtr *devSections;
-
-    if ((numDevSections = xf86MatchDevice (QXL_NAME, &devSections)) <= 0)
-	return FALSE;
-
-    if (!xf86GetPciVideoInfo ())
-	return FALSE;
-
-    numUsed = xf86MatchPciInstances (QXL_NAME, PCI_VENDOR_RED_HAT,
-                                     qxlChips, qxlPciChips,
-                                     devSections, numDevSections,
-                                     drv, &usedChips);
-
-    xfree (devSections);
-
-    if (numUsed < 0)
-    {
-	xfree (usedChips);
-	return FALSE;
-    }
-
-    if (flags & PROBE_DETECT)
-    {
-	xfree (usedChips);
-	return TRUE;
-    }
-
-    for (i = 0; i < numUsed; i++)
-    {
-	ScrnInfoPtr pScrn = NULL;
-	if ((pScrn = xf86ConfigPciEntity (pScrn, 0, usedChips[i], qxlPciChips,
-	                                  0, 0, 0, 0, 0)))
-	    qxl_init_scrn (pScrn, FALSE);
-    }
-
-    xfree (usedChips);
-    return TRUE;
-}
-
-#else /* pciaccess */
 
 static Bool
 qxl_pci_probe (DriverPtr drv, int entity, struct pci_device *dev, intptr_t match)
@@ -1395,8 +1309,6 @@ qxl_pci_probe (DriverPtr drv, int entity, struct pci_device *dev, intptr_t match
 }
 
 #define qxl_probe NULL
-
-#endif
 
 #ifdef XSERVER_PLATFORM_BUS
 static Bool
@@ -1469,13 +1381,8 @@ static DriverRec qxl_driver = {
     NULL,
     NULL,
 #else
-#ifdef XSERVER_LIBPCIACCESS
     qxl_device_match,
     qxl_pci_probe,
-#else
-    NULL,
-    NULL,
-#endif
 #ifdef XSERVER_PLATFORM_BUS
     qxl_platform_probe,
 #else

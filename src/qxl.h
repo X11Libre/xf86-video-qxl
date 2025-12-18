@@ -44,9 +44,7 @@
 
 #include "list.h"
 #ifndef XSPICE
-#ifdef XSERVER_PCIACCESS
 #include "pciaccess.h"
-#endif
 #ifdef XSERVER_PLATFORM_BUS
 #include "xf86platformBus.h"
 #endif
@@ -262,13 +260,8 @@ struct _qxl_screen_t
     xf86OutputPtr *             outputs;
 
 #ifndef XSPICE
-#ifdef XSERVER_LIBPCIACCESS
     struct pci_device *		pci;
     struct pci_io_handle *	io;
-#else
-    pciVideoPtr			pci;
-    PCITAG			pci_tag;
-#endif
     struct xf86_platform_device *platform_dev;
     vgaRegRec                   vgaRegs;
 #endif /* XSPICE */
