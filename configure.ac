@@ -71,7 +71,7 @@ PKG_CHECK_EXISTS(xfont2,
                  [xfont_pc=xfont])
 
 # Obtain compiler/linker options for the driver dependencies
-PKG_CHECK_MODULES(XORG, [xorg-server >= 1.18] xproto fontsproto $xfont_pc $REQUIRED_MODULES)
+PKG_CHECK_MODULES(XORG, [xorg-server >= 25.0.0] xproto fontsproto $xfont_pc $REQUIRED_MODULES)
 
 AC_ARG_ENABLE(kms,
 	      AS_HELP_STRING([--disable-kms],
