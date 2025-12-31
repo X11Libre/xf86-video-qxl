@@ -171,15 +171,6 @@ AM_CONDITIONAL(LIBUDEV, test x$LIBUDEV = xyes)
 
 PKG_CHECK_MODULES([SPICE_PROTOCOL], [spice-protocol >= 0.12.0])
 
-# AC_CHECK_FILE is not supported when cross compiling
-if test "$cross_compiling" = "no" ; then
-    AC_CHECK_FILE(.git, [
-        GIT_VERSION=`git log -1 --format=%h`
-        AC_DEFINE_UNQUOTED([GIT_VERSION], ["$GIT_VERSION"], [Defined if building from git])
-        ]
-    )
-fi
-
 AC_CONFIG_FILES([
                 Makefile
                 src/Makefile

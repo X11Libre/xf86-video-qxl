@@ -188,9 +188,6 @@ Bool qxl_pre_init_kms(ScrnInfoPtr pScrn, int flags)
     pScrn->display->virtualY = qxl->virtual_y;
 
     xf86DrvMsg (scrnIndex, X_INFO, "PreInit complete\n");
-#ifdef GIT_VERSION
-    xf86DrvMsg (scrnIndex, X_INFO, "git commit %s\n", GIT_VERSION);
-#endif
 
     return TRUE;
 

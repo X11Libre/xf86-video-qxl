@@ -1147,9 +1147,6 @@ qxl_pre_init (ScrnInfoPtr pScrn, int flags)
     CHECK_POINT ();
 
     xf86DrvMsg (scrnIndex, X_INFO, "PreInit complete\n");
-#ifdef GIT_VERSION
-    xf86DrvMsg (scrnIndex, X_INFO, "git commit %s\n", GIT_VERSION);
-#endif
     return TRUE;
 
 out:
