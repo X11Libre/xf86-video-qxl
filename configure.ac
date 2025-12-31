@@ -32,7 +32,6 @@ AC_CANONICAL_HOST
 # Initialize Automake
 AM_INIT_AUTOMAKE([foreign dist-xz])
 AC_CONFIG_HEADERS([config.h])
-AC_USE_SYSTEM_EXTENSIONS
 
 # Require xorg-macros: XORG_DEFAULT_OPTIONS
 m4_ifndef([XORG_MACROS_VERSION],
