@@ -68,8 +68,7 @@ qxl_drv_la_SOURCES =			\
 	dfps.c				\
 	qxl_kms.c			\
 	qxl_drmmode.c			\
-	qxl_drmmode.h			\
-	compat-api.h
+	qxl_drmmode.h
 endif
 
 if BUILD_XSPICE
@@ -123,6 +122,5 @@ spiceqxl_drv_la_SOURCES =		\
 	dfps.h				\
 	qxl_uxa.c			\
 	qxl_ums_mode.c			\
-	qxl_io.c			\
-	compat-api.h
+	qxl_io.c
 endif

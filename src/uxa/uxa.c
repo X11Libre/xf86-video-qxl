@@ -349,9 +349,8 @@ static RegionPtr uxa_bitmap_to_region(PixmapPtr pPix)
 	return ret;
 }
 
-static void uxa_xorg_enable_disable_fb_access(SCRN_ARG_TYPE arg, Bool enable)
+static void uxa_xorg_enable_disable_fb_access(ScrnInfoPtr pScrn, Bool enable)
 {
-	SCRN_INFO_PTR(arg);
 	ScreenPtr pScreen = pScrn->pScreen;
 	uxa_screen_t *uxa_screen = uxa_get_screen(pScreen);
 
@@ -362,7 +361,7 @@ static void uxa_xorg_enable_disable_fb_access(SCRN_ARG_TYPE arg, Bool enable)
 		uxa_screen->swappedOut = FALSE;
 
 	if (uxa_screen->SavedEnableDisableFBAccess)
-		uxa_screen->SavedEnableDisableFBAccess(arg, enable);
+		uxa_screen->SavedEnableDisableFBAccess(pScrn, enable);
 }
 
 void uxa_set_fallback_debug(ScreenPtr screen, Bool enable)
@@ -390,7 +389,7 @@ Bool uxa_swapped_out(ScreenPtr screen)
  * uxa_close_screen() unwraps its wrapped screen functions and tears down UXA's
  * screen private, before calling down to the next CloseSccreen.
  */
-static Bool uxa_close_screen(CLOSE_SCREEN_ARGS_DECL)
+static Bool uxa_close_screen(ScreenPtr pScreen)
 {
 	uxa_screen_t *uxa_screen = uxa_get_screen(pScreen);
 	ScrnInfoPtr scrn = xf86ScreenToScrn(pScreen);
@@ -435,7 +434,7 @@ static Bool uxa_close_screen(CLOSE_SCREEN_ARGS_DECL)
 
 	free(uxa_screen);
 
-	return (*pScreen->CloseScreen) (CLOSE_SCREEN_ARGS);
+	return (*pScreen->CloseScreen) (pScreen);
 }
 
 /**

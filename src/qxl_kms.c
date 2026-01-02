@@ -116,7 +116,7 @@ static Bool qxl_open_drm_master(ScrnInfoPtr pScrn)
 }
 
 static Bool
-qxl_close_screen_kms (CLOSE_SCREEN_ARGS_DECL)
+qxl_close_screen_kms (ScreenPtr pScreen)
 {
     ScrnInfoPtr pScrn = xf86ScreenToScrn (pScreen);
     qxl_screen_t *qxl = pScrn->driverPrivate;
@@ -125,7 +125,7 @@ qxl_close_screen_kms (CLOSE_SCREEN_ARGS_DECL)
     qxl_drmmode_uevent_fini(pScrn, &qxl->drmmode);
     pScreen->CloseScreen = qxl->close_screen;
 
-    result = pScreen->CloseScreen (CLOSE_SCREEN_ARGS);
+    result = pScreen->CloseScreen (pScreen);
 
     return result;
 }
@@ -238,9 +238,8 @@ qxl_blank_screen (ScreenPtr pScreen, int mode)
 }
 
 Bool
-qxl_enter_vt_kms (VT_FUNC_ARGS_DECL)
+qxl_enter_vt_kms (ScrnInfoPtr pScrn)
 {
-    SCRN_INFO_PTR (arg);
     qxl_screen_t *qxl = pScrn->driverPrivate;
     int ret;
 
@@ -260,18 +259,15 @@ qxl_enter_vt_kms (VT_FUNC_ARGS_DECL)
     if (!xf86SetDesiredModes(pScrn))
 	return FALSE;
 
-    //    pScrn->EnableDisableFBAccess (XF86_SCRN_ARG (pScrn), TRUE);
     return TRUE;
 }
 
 void
-qxl_leave_vt_kms (VT_FUNC_ARGS_DECL)
+qxl_leave_vt_kms (ScrnInfoPtr pScrn)
 {
-    SCRN_INFO_PTR (arg);
     int ret;
     qxl_screen_t *qxl = pScrn->driverPrivate;
     xf86_hide_cursors (pScrn);
-    //    pScrn->EnableDisableFBAccess (XF86_SCRN_ARG (pScrn), FALSE);
 
 #ifdef XF86_PDEV_SERVER_FD
     if (qxl->platform_dev && (qxl->platform_dev->flags & XF86_PDEV_SERVER_FD))
@@ -287,7 +283,7 @@ qxl_leave_vt_kms (VT_FUNC_ARGS_DECL)
 }
 
 
-Bool qxl_screen_init_kms(SCREEN_INIT_ARGS_DECL)
+Bool qxl_screen_init_kms(ScreenPtr pScreen, int argc, char **argv)
 {
     ScrnInfoPtr    pScrn = xf86ScreenToScrn (pScreen);
     qxl_screen_t * qxl = pScrn->driverPrivate;
@@ -357,7 +353,7 @@ Bool qxl_screen_init_kms(SCREEN_INIT_ARGS_DECL)
     qxl->close_screen = pScreen->CloseScreen;
     pScreen->CloseScreen = qxl_close_screen_kms;
 
-    return qxl_enter_vt_kms(VT_FUNC_ARGS);
+    return qxl_enter_vt_kms(pScrn);
  out:
     return FALSE;
 
