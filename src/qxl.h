@@ -58,7 +58,6 @@ typedef struct xorg_list xorg_list_t;
 
 struct xf86_platform_device;
 
-#include "compat-api.h"
 #define hidden _X_HIDDEN
 
 #ifdef XSPICE
@@ -584,9 +583,9 @@ void qxl_io_flush_release (qxl_screen_t *qxl);
 
 Bool qxl_pre_init_common(ScrnInfoPtr pScrn);
 Bool qxl_fb_init (qxl_screen_t *qxl, ScreenPtr pScreen);
-Bool qxl_screen_init_kms(SCREEN_INIT_ARGS_DECL);
-Bool qxl_enter_vt_kms (VT_FUNC_ARGS_DECL);
-void qxl_leave_vt_kms (VT_FUNC_ARGS_DECL);
+Bool qxl_screen_init_kms(ScreenPtr pScreen, int argc, char **argv);
+Bool qxl_enter_vt_kms (ScrnInfoPtr arg);
+void qxl_leave_vt_kms (ScrnInfoPtr arg);
 void qxl_set_screen_pixmap_header (ScreenPtr pScreen);
 Bool qxl_resize_primary_to_virtual (qxl_screen_t *qxl);
 void qxl_get_formats (int bpp, SpiceSurfaceFmt *format, pixman_format_code_t *pformat);

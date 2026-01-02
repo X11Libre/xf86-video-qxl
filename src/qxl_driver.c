@@ -423,7 +423,7 @@ qxl_restore_state (ScrnInfoPtr pScrn)
 #endif /* XSPICE */
 
 static Bool
-qxl_close_screen (CLOSE_SCREEN_ARGS_DECL)
+qxl_close_screen (ScreenPtr pScreen)
 {
     ScrnInfoPtr pScrn = xf86ScreenToScrn (pScreen);
     qxl_screen_t *qxl = pScrn->driverPrivate;
@@ -435,7 +435,7 @@ qxl_close_screen (CLOSE_SCREEN_ARGS_DECL)
     pScreen->CreateScreenResources = qxl->create_screen_resources;
     pScreen->CloseScreen = qxl->close_screen;
 
-    result = pScreen->CloseScreen (CLOSE_SCREEN_ARGS);
+    result = pScreen->CloseScreen (pScreen);
 
 #ifndef XSPICE
     if (!xf86IsPrimaryPci (qxl->pci) && qxl->primary)
@@ -568,9 +568,8 @@ qxl_resize_primary (qxl_screen_t *qxl, uint32_t width, uint32_t height)
 }
 
 static Bool
-qxl_switch_mode (SWITCH_MODE_ARGS_DECL)
+qxl_switch_mode (ScrnInfoPtr pScrn, DisplayModePtr mode)
 {
-    SCRN_INFO_PTR (arg);
     qxl_screen_t *qxl = pScrn->driverPrivate;
 
     ErrorF ("Ignoring display mode, ensuring recreation of primary\n");
@@ -668,7 +667,7 @@ qxl_fb_init (qxl_screen_t *qxl, ScreenPtr pScreen)
 }
 
 static Bool
-qxl_screen_init (SCREEN_INIT_ARGS_DECL)
+qxl_screen_init (ScreenPtr pScreen, int argc, char **argv)
 {
     ScrnInfoPtr    pScrn = xf86ScreenToScrn (pScreen);
     qxl_screen_t * qxl = pScrn->driverPrivate;
@@ -800,9 +799,8 @@ out:
 }
 
 static Bool
-qxl_enter_vt (VT_FUNC_ARGS_DECL)
+qxl_enter_vt (ScrnInfoPtr pScrn)
 {
-    SCRN_INFO_PTR (arg);
     qxl_screen_t *qxl = pScrn->driverPrivate;
 
     qxl_save_state (pScrn);
@@ -829,20 +827,19 @@ qxl_enter_vt (VT_FUNC_ARGS_DECL)
 
     qxl_create_desired_modes (qxl);
 
-    pScrn->EnableDisableFBAccess (XF86_SCRN_ARG (pScrn), TRUE);
+    pScrn->EnableDisableFBAccess (pScrn, TRUE);
 
     return TRUE;
 }
 
 static void
-qxl_leave_vt (VT_FUNC_ARGS_DECL)
+qxl_leave_vt (ScrnInfoPtr pScrn)
 {
-    SCRN_INFO_PTR (arg);
     qxl_screen_t *qxl = pScrn->driverPrivate;
 
     xf86_hide_cursors (pScrn);
 
-    pScrn->EnableDisableFBAccess (XF86_SCRN_ARG (pScrn), FALSE);
+    pScrn->EnableDisableFBAccess (pScrn, FALSE);
 
     if (qxl->deferred_fps <= 0)
         qxl->vt_surfaces = qxl_surface_cache_evacuate_all (qxl->surface_cache);
