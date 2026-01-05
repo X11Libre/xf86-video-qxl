@@ -157,7 +157,7 @@ typedef struct SpiceTimer {
 static CARD32 xorg_timer_callback(
     OsTimerPtr xorg_timer,
     CARD32 time,
-    pointer arg)
+    void *arg)
 {
     SpiceTimer *timer = (SpiceTimer*)arg;
 
@@ -261,7 +261,7 @@ static int set_watch_fds(fd_set *rfds, fd_set *wfds)
  * readmask is just an fdset on linux, but something totally different on windows (etc).
  * DIX has a comment about it using a special type to hide this (so we break that here)
  */
-static void xspice_block_handler(pointer data, OSTimePtr timeout, pointer readmask)
+static void xspice_block_handler(void *data, OSTimePtr timeout, void *readmask)
 {
     /* set all our fd's */
     set_watch_fds((fd_set*)readmask, (fd_set*)readmask);
@@ -324,7 +324,7 @@ static int no_write_watches(Ring *w)
     return 1;
 }
 
-static void xspice_wakeup_handler(pointer data, int nfds, pointer readmask)
+static void xspice_wakeup_handler(void *data, int nfds, void *readmask)
 {
     if (!nfds && no_write_watches(&watches)) {
         return;

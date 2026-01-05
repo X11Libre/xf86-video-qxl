@@ -1096,7 +1096,7 @@ uxa_damage_image_glyph_blt(RegionPtr	region,
 			   int		    y,
 			   unsigned int    nglyph,
 			   CharInfoPtr	    *ppci,
-			   pointer	    pglyphBase)
+			   void             *pglyphBase)
 {
     uxa_damage_chars (region,
 		      pDrawable, pGC->font, x + pDrawable->x, y + pDrawable->y,
@@ -1111,7 +1111,7 @@ uxa_damage_poly_glyph_blt(RegionPtr	region,
 			  int		y,
 			  unsigned int	nglyph,
 			  CharInfoPtr	*ppci,
-			  pointer	pglyphBase)
+			  void          *pglyphBase)
 {
     uxa_damage_chars (region,
 		      pDrawable, pGC->font, x + pDrawable->x, y + pDrawable->y,

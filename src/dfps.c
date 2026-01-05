@@ -73,7 +73,7 @@ typedef struct FrameTimer {
 static CARD32 xorg_timer_callback(
     OsTimerPtr xorg_timer,
     CARD32 time,
-    pointer arg)
+    void *arg)
 {
     FrameTimer *timer = (FrameTimer*)arg;
 

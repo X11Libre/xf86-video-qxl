@@ -1385,8 +1385,8 @@ static DriverRec qxl_driver = {
 #endif /* XSPICE */
 };
 
-static pointer
-qxl_setup (pointer module, pointer opts, int *errmaj, int *errmin)
+static void *
+qxl_setup (void *module, void *opts, int *errmaj, int *errmin)
 {
     static Bool loaded = FALSE;
 
