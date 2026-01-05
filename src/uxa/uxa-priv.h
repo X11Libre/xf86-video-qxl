@@ -225,12 +225,12 @@ uxa_check_poly_fill_rect(DrawablePtr pDrawable, GCPtr pGC,
 void
 uxa_check_image_glyph_blt(DrawablePtr pDrawable, GCPtr pGC,
 			  int x, int y, unsigned int nglyph,
-			  CharInfoPtr * ppci, pointer pglyphBase);
+			  CharInfoPtr * ppci, void *pglyphBase);
 
 void
 uxa_check_poly_glyph_blt(DrawablePtr pDrawable, GCPtr pGC,
 			 int x, int y, unsigned int nglyph,
-			 CharInfoPtr * ppci, pointer pglyphBase);
+			 CharInfoPtr * ppci, void *pglyphBase);
 
 void
 uxa_check_push_pixels(GCPtr pGC, PixmapPtr pBitmap,

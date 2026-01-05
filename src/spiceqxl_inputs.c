@@ -113,7 +113,7 @@ static int xspice_pointer_proc(DeviceIntPtr pDevice, int onoff)
     return Success;
 }
 
-static void xspice_keyboard_bell(int percent, DeviceIntPtr device, pointer ctrl, int class_)
+static void xspice_keyboard_bell(int percent, DeviceIntPtr device, void *ctrl, int class_)
 {
 }
 
@@ -417,7 +417,7 @@ XSpiceKeyboardUnInit(InputDriverPtr drv, InputInfoPtr pInfo, int flags)
 {
 }
 
-void xspice_add_input_drivers(pointer module)
+void xspice_add_input_drivers(void *module)
 {
     xf86AddInputDriver(&XSPICE_POINTER, module, 0);
     xf86AddInputDriver(&XSPICE_KEYBOARD, module, 0);
