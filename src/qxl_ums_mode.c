@@ -278,10 +278,8 @@ qxl_output_mode_valid (xf86OutputPtr output, DisplayModePtr pModes)
 static const xf86OutputFuncsRec qxl_output_funcs = {
     .dpms = qxl_output_dpms,
     .create_resources = qxl_output_create_resources,
-#ifdef RANDR_12_INTERFACE
     .set_property = qxl_output_set_property,
     .get_property = qxl_output_get_property,
-#endif
     .detect = qxl_output_detect,
     .mode_valid = qxl_output_mode_valid,
 
