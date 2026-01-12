@@ -678,12 +678,9 @@ drmmode_output_get_property(xf86OutputPtr output, Atom property)
 static const xf86OutputFuncsRec drmmode_output_funcs = {
     .dpms = drmmode_output_dpms,
     .create_resources = drmmode_output_create_resources,
-#ifdef RANDR_12_INTERFACE
     .set_property = drmmode_output_set_property,
     .get_property = drmmode_output_get_property,
-#endif
 #if 0
-
     .save = drmmode_crt_save,
     .restore = drmmode_crt_restore,
     .mode_fixup = drmmode_crt_mode_fixup,
