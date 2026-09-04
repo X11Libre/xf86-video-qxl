@@ -1,0 +1,23 @@
+TODO:
+
+ OOM. Not releasing?
+  Out of memory allocating 3145748 bytes
+  Out of mem - stats
+
+ Cursor channel missing.
+ No copy paste.
+ No agent at all.
+  agent should probably be thought to run with Xspice too. That way
+   mouse emulation in Xspice can be avoided entirely. But how do you
+   get an input device to belong to Xspice :1.0 and not to Xorg :0.0?
+
+ Keyboard:
+  * repeat (xset r 100) does nothing. This is because spice client
+   of course does repeat. But would be nice to transmit this.
+
+ Video: youtube seemed choppy, some frames were repeating (cpu 30%~, so not
+  cpu bound). Possible multimedia time? Isn't this set by the driver, i.e.
+  should be identical with in vm qxl driver?
+
+ Performance:
+  didn't check.
