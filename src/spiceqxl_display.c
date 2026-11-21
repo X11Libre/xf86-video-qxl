@@ -47,7 +47,7 @@
         if (!((uint8_t*)m_item >= (uint8_t*)(start) && (uint8_t*)(m_item + 1) <= (uint8_t*)(end))) { \
             abort();                                                    \
         }                                                               \
-        ret = &m_item->el;                                              \
+        ret = m_item;                                                   \
     }
 
 #undef SPICE_RING_CONS_ITEM
@@ -183,7 +183,7 @@ static inline void qxl_push_free_res(qxl_screen_t *qxl, int flush)
 {
     QXLRam *header = get_ram_header(qxl);
     QXLReleaseRing *ring = &header->release_ring;
-    uint64_t *item;
+    QXLReleaseRing_ring_el *item;
     int notify;
 
 #define QXL_FREE_BUNCH_SIZE 32
@@ -210,7 +210,7 @@ static inline void qxl_push_free_res(qxl_screen_t *qxl, int flush)
         qxl_send_events(qxl, QXL_INTERRUPT_DISPLAY);
     }
     SPICE_RING_PROD_ITEM(ring, item);
-    *item = 0;
+    item->el = 0;
     qxl->num_free_res = 0;
     qxl->last_release = NULL;
 }
@@ -222,7 +222,8 @@ static void interface_release_resource(QXLInstance *sin,
     qxl_screen_t *qxl = container_of(sin, qxl_screen_t, display_sin);
     QXLRam *ram = get_ram_header(qxl);
     QXLReleaseRing *ring;
-    uint64_t *item, id;
+    QXLReleaseRing_ring_el *item;
+    uint64_t id;
 
     /*
      * ext->info points into guest-visible memory
@@ -230,11 +231,11 @@ static void interface_release_resource(QXLInstance *sin,
      */
     ring = &ram->release_ring;
     SPICE_RING_PROD_ITEM(ring, item);
-    if (*item == 0) {
+    if (item->el == 0) {
         /* stick head into the ring */
         id = ext.info->id;
         ext.info->next = 0;
-        *item = id;
+        item->el = id;
     } else {
         /* append item to the list */
         qxl->last_release->next = ext.info->id;

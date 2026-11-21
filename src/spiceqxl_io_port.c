@@ -39,7 +39,7 @@
         if (!((uint8_t*)m_item >= (uint8_t*)(start) && (uint8_t*)(m_item + 1) <= (uint8_t*)(end))) { \
             abort();                                                    \
         }                                                               \
-        ret = &m_item->el;                                              \
+        ret = m_item;                                                   \
     }
 
 
@@ -66,7 +66,7 @@ static void __attribute__ ((format (printf, 2, 3))) dprint(int _level, const cha
 void xspice_init_qxl_ram(qxl_screen_t *qxl)
 {
     QXLRam *ram = get_ram_header(qxl);
-    uint64_t *item;
+    QXLReleaseRing_ring_el *item;
 
     ram->magic       = QXL_RAM_MAGIC;
     ram->int_pending = 0;
@@ -75,7 +75,7 @@ void xspice_init_qxl_ram(qxl_screen_t *qxl)
     SPICE_RING_INIT(&ram->cursor_ring);
     SPICE_RING_INIT(&ram->release_ring);
     SPICE_RING_PROD_ITEM(&ram->release_ring, item);
-    *item = 0;
+    item->el = 0;
 }
 
 static void qxl_reset_state(qxl_screen_t *qxl)
