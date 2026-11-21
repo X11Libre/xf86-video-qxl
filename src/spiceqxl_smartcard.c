@@ -153,6 +153,11 @@ qxl_add_spice_smartcard_interface (qxl_screen_t *qxl)
         return 0;
     }
 
+    if (strlen(qxl->smartcard_file) >= sizeof(addr.sun_path)) {
+        ErrorF("smartcard: socket path too long: %s\n", qxl->smartcard_file);
+        return ENAMETOOLONG;
+    }
+
     smartcard_sin.fd = -1;
     smartcard_sin.listen_fd = socket(AF_UNIX, SOCK_STREAM, 0);
     if (smartcard_sin.listen_fd < 0) {
@@ -162,7 +167,7 @@ qxl_add_spice_smartcard_interface (qxl_screen_t *qxl)
 
     memset(&addr, 0, sizeof(addr));
     addr.sun_family = AF_UNIX;
-    strncpy(addr.sun_path, qxl->smartcard_file, sizeof(addr.sun_path) - 1);
+    snprintf(addr.sun_path, sizeof(addr.sun_path), "%s", qxl->smartcard_file);
     unlink(qxl->smartcard_file);
 
     if (bind(smartcard_sin.listen_fd, (struct sockaddr *) &addr, sizeof(addr))) {

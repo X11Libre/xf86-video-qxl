@@ -1046,14 +1046,16 @@ qxl_pre_init (ScrnInfoPtr pScrn, int flags)
     playback_fifo_dir = get_str_option(qxl->options, OPTION_SPICE_PLAYBACK_FIFO_DIR,
                "XSPICE_PLAYBACK_FIFO_DIR");
     if (playback_fifo_dir)
-        strncpy(qxl->playback_fifo_dir, playback_fifo_dir, sizeof(qxl->playback_fifo_dir));
+        snprintf(qxl->playback_fifo_dir, sizeof(qxl->playback_fifo_dir), "%s",
+                 playback_fifo_dir);
     else
         qxl->playback_fifo_dir[0] = '\0';
 
     smartcard_file = get_str_option(qxl->options, OPTION_SPICE_SMARTCARD_FILE,
                "XSPICE_SMARTCARD_FILE");
     if (smartcard_file)
-        strncpy(qxl->smartcard_file, smartcard_file, sizeof(qxl->smartcard_file));
+        snprintf(qxl->smartcard_file, sizeof(qxl->smartcard_file), "%s",
+                 smartcard_file);
     else
         qxl->smartcard_file[0] = '\0';
 

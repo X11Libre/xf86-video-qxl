@@ -147,6 +147,11 @@ void spiceqxl_vdagent_init(qxl_screen_t *qxl)
     if (!enabled || !vdagent_virtio_filename) {
         return;
     }
+    if (strlen(vdagent_virtio_filename) >= sizeof(address.sun_path)) {
+        fprintf(stderr, "unix domain socket path too long: %s\n",
+                vdagent_virtio_filename);
+        return;
+    }
 
     virtio_fd = socket(PF_UNIX, SOCK_STREAM, 0);
     if (virtio_fd == -1) {
