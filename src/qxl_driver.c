@@ -1435,3 +1435,11 @@ qxlModuleData
     qxl_setup,
     NULL
 };
+
+#ifdef XF86_MODULE_VERSION_SUFFIX
+#ifdef XSPICE
+XF86_MODULE_VERSION_SUFFIX(spiceqxl, QXL_VERSION_SUFFIX);
+#else
+XF86_MODULE_VERSION_SUFFIX(qxl, QXL_VERSION_SUFFIX);
+#endif
+#endif
