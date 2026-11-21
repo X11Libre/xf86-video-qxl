@@ -21,7 +21,8 @@
 # During distcheck, system locations (as provided by pkg-config) may
 # not be writable; provide instead relative locations.
 
-DISTCHECK_CONFIGURE_FLAGS = --with-xorg-module-dir='$${libdir}/xorg/modules'
+DISTCHECK_CONFIGURE_FLAGS = --with-xorg-module-dir='$${libdir}/xorg/modules' \
+			    --enable-xspice
 
 SUBDIRS = src scripts examples
 
@@ -39,5 +40,3 @@ dist-hook: ChangeLog INSTALL
 EXTRA_DIST = \
 	README.md		\
 	README.xspice
-
-DISTCHECK_CONFIGURE_FLAGS=--enable-xspice
