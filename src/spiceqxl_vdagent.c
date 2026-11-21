@@ -51,7 +51,11 @@ static int vmc_read(SpiceCharDeviceInstance *sin, uint8_t *buf, int len)
     }
     nbytes = recv(virtio_client_fd, buf, len, 0);
     if (nbytes <= 0) {
-        if (errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR) {
+        if (nbytes < 0 && (errno == EAGAIN || errno == EINTR
+#if EWOULDBLOCK != EAGAIN
+                           || errno == EWOULDBLOCK
+#endif
+                           )) {
             return 0;
         }
         fprintf(stderr, "ERROR: vdagent died\n");

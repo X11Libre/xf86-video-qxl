@@ -70,7 +70,11 @@ static int smartcard_read(SpiceCharDeviceInstance *sin, uint8_t *buf, int len)
 
     rc = read(smartcard_sin.fd, buf, len);
     if (rc <= 0) {
-        if (errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR) {
+        if (rc < 0 && (errno == EAGAIN || errno == EINTR
+#if EWOULDBLOCK != EAGAIN
+                       || errno == EWOULDBLOCK
+#endif
+                       )) {
             return 0;
         }
         ErrorF("smartcard socket died: %s\n", strerror(errno));
