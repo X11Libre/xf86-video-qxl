@@ -905,6 +905,11 @@ _pixman_region_init_rectangles(pixman_region16_t *region,
 	pixman_bool_t ret;
 	int i;
 
+	if (num_rects <= 0) {
+		pixman_region_init(region);
+		return TRUE;
+	}
+
 	if (num_rects > sizeof(stack_boxes) / sizeof(stack_boxes[0])) {
 		boxes = malloc(sizeof(pixman_box16_t) * num_rects);
 		if (boxes == NULL)
