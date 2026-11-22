@@ -84,8 +84,8 @@ AC_ARG_ENABLE(kms,
 
 # Checks for libraries.
 if test "x$DRM_MODE" = xyes; then
-	# require support for kms cursor hotspot
-	PKG_CHECK_MODULES(DRM, [libdrm >= 2.4.46])
+	# the XLibre-wide minimum (KMS cursor hotspots alone need 2.4.46)
+	PKG_CHECK_MODULES(DRM, [libdrm >= 2.4.104])
 else
 	DRM_MODE=no
 fi
